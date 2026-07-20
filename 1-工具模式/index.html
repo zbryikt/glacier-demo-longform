@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>圖片比較工具 - Image Comparison Tool</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Remixicon icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <i class="ri-git-commit-line logo-icon"></i>
+        <span>Image Compare Pro</span>
+        <span class="version-tag">Vanilla JS</span>
+      </div>
+      <p class="subtitle">拉動滑桿即時比較 before.jpg 與 after.jpg 圖片差異</p>
+    </header>
+
+    <!-- Main Comparison Canvas -->
+    <main class="comparison-stage">
+      <div class="comparison-card" id="comparisonCard">
+        
+        <!-- Mode: Slider & Opacity Comparison Container -->
+        <div class="comparison-wrapper horizontal" id="comparisonWrapper">
+          <!-- Before Image (Underneath / Left side) -->
+          <div class="img-wrapper before-wrapper">
+            <img id="beforeImg" src="before.jpg" alt="Before Image" loading="eager">
+            <span class="badge badge-before" id="labelBefore">BEFORE</span>
+          </div>
+
+          <!-- After Image (Overlay / Right side clipped) -->
+          <div class="img-wrapper after-wrapper" id="afterWrapper">
+            <img id="afterImg" src="after.jpg" alt="After Image" loading="eager">
+            <span class="badge badge-after" id="labelAfter">AFTER</span>
+          </div>
+
+          <!-- Slider Line & Handle -->
+          <div class="slider-handle" id="sliderHandle" tabindex="0" role="slider" aria-label="Image comparison slider">
+            <div class="handle-line"></div>
+            <div class="handle-button">
+              <i class="ri-arrow-left-s-line handle-icon-left"></i>
+              <i class="ri-arrow-right-s-line handle-icon-right"></i>
+            </div>
+            <div class="handle-line"></div>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Container (Hidden by default) -->
+        <div class="side-by-side-wrapper hidden" id="sideBySideWrapper">
+          <div class="side-box">
+            <span class="badge badge-before">BEFORE</span>
+            <img id="sbsBeforeImg" src="before.jpg" alt="Before Image">
+          </div>
+          <div class="side-box">
+            <span class="badge badge-after">AFTER</span>
+            <img id="sbsAfterImg" src="after.jpg" alt="After Image">
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Toolbar / Controls -->
+    <section class="controls-panel">
+      <!-- Mode Selection Group -->
+      <div class="control-group">
+        <label class="group-label"><i class="ri-layout-grid-line"></i> 比較模式</label>
+        <div class="segmented-control">
+          <button class="btn-segment active" data-mode="slider">
+            <i class="ri-side-by-side-line"></i> 左右分割
+          </button>
+          <button class="btn-segment" data-mode="fade">
+            <i class="ri-contrast-drop-line"></i> 透明度重疊
+          </button>
+          <button class="btn-segment" data-mode="side">
+            <i class="ri-layout-column-line"></i> 並排檢視
+          </button>
+          <button class="btn-segment" data-mode="toggle">
+            <i class="ri-hand-coin-line"></i> 按住切換
+          </button>
+        </div>
+      </div>
+
+      <!-- Settings & Tools Group -->
+      <div class="control-group row-group">
+        <!-- Direction Control -->
+        <div class="sub-group" id="directionGroup">
+          <label class="group-label"><i class="ri-compass-3-line"></i> 方向</label>
+          <div class="segmented-control mini">
+            <button class="btn-segment active" id="btnHorizontal" title="水平分割">
+              <i class="ri-arrow-left-right-line"></i> 水平
+            </button>
+            <button class="btn-segment" id="btnVertical" title="垂直分割">
+              <i class="ri-arrow-up-down-line"></i> 垂直
+            </button>
+          </div>
+        </div>
+
+        <!-- Opacity Slider (Only active in Fade mode) -->
+        <div class="sub-group opacity-control hidden" id="opacityGroup">
+          <label class="group-label" for="opacityRange"><i class="ri-sun-line"></i> 透明度: <span id="opacityVal">50%</span></label>
+          <input type="range" id="opacityRange" min="0" max="100" value="50" class="custom-range">
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="sub-group">
+          <label class="group-label"><i class="ri-tools-line"></i> 操作</label>
+          <div class="action-buttons">
+            <button class="btn-action" id="btnSwap" title="對調圖片位置">
+              <i class="ri-swap-line"></i> 對調圖片
+            </button>
+            <button class="btn-action" id="btnReset" title="重置位置與比例">
+              <i class="ri-restart-line"></i> 重置 50%
+            </button>
+            <button class="btn-action" id="btnFullscreen" title="全螢幕檢視">
+              <i class="ri-fullscreen-line"></i> 全螢幕
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Upload / Replacement Panel -->
+      <div class="control-group upload-group">
+        <label class="group-label"><i class="ri-upload-cloud-2-line"></i> 更換自訂圖片</label>
+        <div class="upload-boxes">
+          <label class="upload-dropzone" for="inputBefore">
+            <i class="ri-image-add-line"></i>
+            <span>更換 Before 圖片</span>
+            <input type="file" id="inputBefore" accept="image/*">
+          </label>
+          <label class="upload-dropzone" for="inputAfter">
+            <i class="ri-image-add-line"></i>
+            <span>更換 After 圖片</span>
+            <input type="file" id="inputAfter" accept="image/*">
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>提示：你可以滑動/拖曳中央分割線，或者使用鍵盤左右方向鍵進行微調。</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
