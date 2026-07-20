@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>圖片比較專案 - 版本展示藝廊 (Image Comparison Gallery)</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Remixicon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --bg-card: rgba(18, 26, 43, 0.75);
+      --bg-card-hover: rgba(26, 38, 62, 0.9);
+      --accent-primary: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.12);
+      --border-hover: rgba(56, 189, 248, 0.5);
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+      display: flex;
+      justify-content: center;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.35rem 0.9rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-primary);
+      border-radius: 30px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 680px;
+    }
+
+    /* Grid Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+      gap: 2rem;
+    }
+
+    /* Version Card */
+    .version-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .version-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.15);
+    }
+
+    /* Thumbnail Preview Container */
+    .thumbnail-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .thumbnail-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .version-card:hover .thumbnail-container img {
+      transform: scale(1.03);
+    }
+
+    .version-tag-overlay {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(7, 10, 18, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: var(--radius-md);
+      z-index: 5;
+    }
+
+    /* Card Content Body */
+    .card-body {
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* Action Link Button */
+    .btn-open {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+    }
+
+    .btn-open:hover {
+      background: var(--accent-primary);
+      color: #0f172a;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <span class="header-badge"><i class="ri-stack-line"></i> Version Showcase</span>
+      <h1>圖片比較專案 - 演進歷程藝廊</h1>
+      <p class="subtitle">點擊下方卡片可直接體驗不同階段開發的圖片比較與 Scrollytelling 視覺互動效果。</p>
+    </header>
+
+    <!-- Version Gallery Grid -->
+    <main class="gallery-grid">
+      
+      <!-- Version 1 -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay">VERSION 1</span>
+          <img src="1-工具模式/thumbnail.png" alt="1-工具模式 截圖預覽" loading="eager">
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><i class="ri-tools-line"></i> 1-工具模式</h2>
+          <p class="card-desc">全功能圖片比對獨立工具箱。包含左右/上下分割滑桿、透明度重疊、並排檢視、按住切換等多種比較模式，並支援自訂圖片上傳與全螢幕操作。</p>
+          <a class="btn-open" href="1-工具模式/index.html">
+            <i class="ri-external-link-line"></i> 開啟 1-工具模式 網頁
+          </a>
+        </div>
+      </article>
+
+      <!-- Version 2 -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay">VERSION 2</span>
+          <img src="2-左右對比scrollytelling/thumbnail.png" alt="2-左右對比 截圖預覽" loading="eager">
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><i class="ri-layout-column-line"></i> 2-左右對比 Scrollytelling</h2>
+          <p class="card-desc">左右雙欄滾動敘事架構。左欄為 Sticky 固定比較圖幅，右欄為 10 段冰川消融故事。隨著頁面向下滑動，分割線會自下向上自動 reveal 融化後的冰川地貌。</p>
+          <a class="btn-open" href="2-左右對比scrollytelling/index.html">
+            <i class="ri-external-link-line"></i> 開啟 2-左右對比網頁
+          </a>
+        </div>
+      </article>
+
+      <!-- Version 3 -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay">VERSION 3</span>
+          <img src="3-底圖式scrollytelling/thumbnail.png" alt="3-底圖式 截圖預覽" loading="eager">
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><i class="ri-fullscreen-line"></i> 3-底圖式 Scrollytelling</h2>
+          <p class="card-desc">全螢幕滿版底圖沉浸式敘事。圖片固定置底為全螢幕背景，文章卡片單欄置中呈現半透明玻璃質感。採用極簡直角、無邊框、無陰影設計，且段落間距加大至 75vh 以利看圖。</p>
+          <a class="btn-open" href="3-底圖式scrollytelling/index.html">
+            <i class="ri-external-link-line"></i> 開啟 3-底圖式網頁
+          </a>
+        </div>
+      </article>
+
+      <!-- Version 4 -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay">VERSION 4</span>
+          <img src="4-局部放大焦點/thumbnail.png" alt="4-局部放大焦點 截圖預覽" loading="eager">
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><i class="ri-search-eye-line"></i> 4-局部放大焦點</h2>
+          <p class="card-desc">右側文章排版，騰出左側 60% 以上寬廣露圖空間。滾動時底圖會自動進行局部放大 (Zoom) 並跳出紅圈焦點標籤與說明。分割 Bar 為獨立預設置中，支援點擊自動滑動與手動拖拽對齊。</p>
+          <a class="btn-open" href="4-局部放大焦點/index.html">
+            <i class="ri-external-link-line"></i> 開啟 4-局部放大焦點網頁
+          </a>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 圖片比較與滾動敘事專案藝廊 (Image Comparison Gallery)</p>
+    </footer>
+  </div>
+</body>
+</html>
