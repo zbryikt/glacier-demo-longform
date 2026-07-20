@@ -29,19 +29,82 @@ document.addEventListener('DOMContentLoaded', async () => {
   let animId = null;
   let focalPoints = {};
 
-  // --- 1. Load Data Decoupled from JSON ---
+  // --- 1. Load Data directly from story.md ---
   try {
-    const res = await fetch('chapters.json');
+    const res = await fetch('story.md');
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const data = await res.json();
+    const mdText = await res.text();
+    const data = parseMarkdownStory(mdText);
     renderContent(data);
   } catch (err) {
-    console.error('Failed to load chapters.json:', err);
-    narrativeStream.innerHTML = `<div class="error-msg">載入資料失敗，請重新整理頁面。</div>`;
+    console.error('Failed to load story.md:', err);
+    narrativeStream.innerHTML = `<div class="error-msg">載入故事檔案 story.md 失敗，請重新整理頁面。</div>`;
     return;
   }
 
-  // --- 2. Dynamic Content Rendering with Markdown Support ---
+  // --- Markdown & Frontmatter Story Parser ---
+  function parseMarkdownStory(mdText) {
+    let meta = {};
+    let contentText = mdText;
+
+    // Extract Frontmatter between --- and ---
+    const frontmatterMatch = mdText.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+    if (frontmatterMatch) {
+      const yamlLines = frontmatterMatch[1].split(/\r?\n/);
+      yamlLines.forEach(line => {
+        const colonIdx = line.indexOf(':');
+        if (colonIdx !== -1) {
+          const key = line.substring(0, colonIdx).trim();
+          const val = line.substring(colonIdx + 1).trim();
+          meta[key] = val;
+        }
+      });
+      contentText = frontmatterMatch[2];
+    }
+
+    // Split chapters by '## Chapter ' or '---'
+    const rawSections = contentText.split(/\r?\n---\r?\n|\r?\n(?=## Chapter )/);
+    const chapters = [];
+
+    rawSections.forEach((sec) => {
+      const trimmed = sec.trim();
+      if (!trimmed) return;
+
+      // Match header line: ## Chapter XX: Title
+      const headerMatch = trimmed.match(/^##\s+(Chapter\s+\d+):\s*(.*?)(\r?\n|$)/i);
+      let badge = `Chapter ${String(chapters.length + 1).padStart(2, '0')}`;
+      let title = '';
+      let body = trimmed;
+
+      if (headerMatch) {
+        badge = headerMatch[1].trim();
+        title = headerMatch[2].trim();
+        body = trimmed.substring(headerMatch[0].length).trim();
+      }
+
+      // Extract focalPoint comment: <!-- focalPoint: {...} -->
+      let focalPoint = { active: false, scale: 1.0, originX: 0.5, originY: 0.5, targetBar: 50 };
+      const fpMatch = body.match(/<!--\s*focalPoint:\s*(\{[\s\S]*?\})\s*-->/);
+      if (fpMatch) {
+        try {
+          focalPoint = JSON.parse(fpMatch[1]);
+        } catch (e) {}
+        body = body.replace(fpMatch[0], '').trim();
+      }
+
+      chapters.push({
+        id: chapters.length + 1,
+        badge: badge,
+        title: title,
+        content: body,
+        focalPoint: focalPoint
+      });
+    });
+
+    return { meta, chapters };
+  }
+
+  // --- 2. Dynamic Content Rendering from Markdown Data ---
   function renderContent(data) {
     // Render Hero Card
     if (data.meta) {
