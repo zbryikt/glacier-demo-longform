@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Commit Log - 圖片比較專案版本歷程</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Remixicon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: #111827;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-green: #34d399;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .title-group i {
+      font-size: 2rem;
+      color: var(--accent-blue);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .branch-tag {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-blue);
+      padding: 0.35rem 0.8rem;
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 24px;
+      bottom: 24px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+    }
+
+    .commit-card {
+      position: relative;
+      padding-left: 60px;
+      margin-bottom: 2rem;
+    }
+
+    .commit-node {
+      position: absolute;
+      left: 14px;
+      top: 20px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      border: 3px solid var(--accent-blue);
+      z-index: 2;
+    }
+
+    .commit-card:nth-child(1) .commit-node { border-color: #38bdf8; }
+    .commit-card:nth-child(2) .commit-node { border-color: #a855f7; }
+    .commit-card:nth-child(3) .commit-node { border-color: #34d399; }
+    .commit-card:nth-child(4) .commit-node { border-color: #f43f5e; }
+    .commit-card:nth-child(5) .commit-node { border-color: #fbbf24; }
+
+    .card-inner {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card-inner:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hash-badge {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .commit-msg {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .commit-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .commit-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .folder-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-blue);
+      text-decoration: none;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+      align-self: flex-start;
+      margin-top: 0.25rem;
+    }
+
+    .folder-link:hover {
+      background: rgba(56, 189, 248, 0.25);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title-group">
+        <i class="ri-git-branch-line"></i>
+        <h1>Git Repository Commit Log</h1>
+      </div>
+      <div class="branch-tag">
+        <i class="ri-git-commit-line"></i> branch: master
+      </div>
+    </header>
+
+    <div class="timeline">
+      <!-- Commit 5 -->
+      <div class="commit-card">
+        <div class="commit-node"></div>
+        <div class="card-inner">
+          <div class="card-header">
+            <span class="hash-badge">5eb360a</span>
+            <span class="commit-msg">feat(v4): add auto bar sweep across opposite side during waypoint focal point translation</span>
+          </div>
+          <div class="commit-meta">
+            <span><i class="ri-user-3-line"></i> zbryikt</span>
+            <span><i class="ri-history-line"></i> 最新提交</span>
+            <span><i class="ri-folder-3-line"></i> 4-局部放大焦點</span>
+          </div>
+          <a class="folder-link" href="4-局部放大焦點/index.html" target="_blank">
+            <i class="ri-external-link-line"></i> 開啟最新第 4 版 (4-局部放大焦點/index.html)
+          </a>
+        </div>
+      </div>
+
+      <!-- Commit 4 -->
+      <div class="commit-card">
+        <div class="commit-node"></div>
+        <div class="card-inner">
+          <div class="card-header">
+            <span class="hash-badge">446d26a</span>
+            <span class="commit-msg">feat(v4): add focal point zoom, red marker callouts, and left-anchored draggable bar</span>
+          </div>
+          <div class="commit-meta">
+            <span><i class="ri-user-3-line"></i> zbryikt</span>
+            <span><i class="ri-folder-3-line"></i> 4-局部放大焦點</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commit 3 -->
+      <div class="commit-card">
+        <div class="commit-node"></div>
+        <div class="card-inner">
+          <div class="card-header">
+            <span class="hash-badge">9252f66</span>
+            <span class="commit-msg">feat(v3): add full-screen background scrollytelling with borderless transparent cards</span>
+          </div>
+          <div class="commit-meta">
+            <span><i class="ri-user-3-line"></i> zbryikt</span>
+            <span><i class="ri-folder-3-line"></i> 3-底圖式scrollytelling</span>
+          </div>
+          <a class="folder-link" href="3-底圖式scrollytelling/index.html" target="_blank">
+            <i class="ri-external-link-line"></i> 開啟第 3 版 (3-底圖式scrollytelling/index.html)
+          </a>
+        </div>
+      </div>
+
+      <!-- Commit 2 -->
+      <div class="commit-card">
+        <div class="commit-node"></div>
+        <div class="card-inner">
+          <div class="card-header">
+            <span class="hash-badge">fef3234</span>
+            <span class="commit-msg">feat(v2): add 2-column scrollytelling with vertical scroll reveal</span>
+          </div>
+          <div class="commit-meta">
+            <span><i class="ri-user-3-line"></i> zbryikt</span>
+            <span><i class="ri-folder-3-line"></i> 2-左右對比scrollytelling</span>
+          </div>
+          <a class="folder-link" href="2-左右對比scrollytelling/index.html" target="_blank">
+            <i class="ri-external-link-line"></i> 開啟第 2 版 (2-左右對比scrollytelling/index.html)
+          </a>
+        </div>
+      </div>
+
+      <!-- Commit 1 -->
+      <div class="commit-card">
+        <div class="commit-node"></div>
+        <div class="card-inner">
+          <div class="card-header">
+            <span class="hash-badge">6115cb5</span>
+            <span class="commit-msg">feat(v1): add interactive image comparison tool with multi-mode controls</span>
+          </div>
+          <div class="commit-meta">
+            <span><i class="ri-user-3-line"></i> zbryikt</span>
+            <span><i class="ri-folder-3-line"></i> 1-工具模式</span>
+          </div>
+          <a class="folder-link" href="1-工具模式/index.html" target="_blank">
+            <i class="ri-external-link-line"></i> 開啟第 1 版 (1-工具模式/index.html)
+          </a>
+        </div>
+      </div>
+
+      <!-- Commit 0 -->
+      <div class="commit-card">
+        <div class="commit-node"></div>
+        <div class="card-inner">
+          <div class="card-header">
+            <span class="hash-badge">7ad424a</span>
+            <span class="commit-msg">feat: initialize repository with base image assets and prompt specs</span>
+          </div>
+          <div class="commit-meta">
+            <span><i class="ri-user-3-line"></i> zbryikt</span>
+            <span><i class="ri-flag-line"></i> Initial Commit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 專案 Git 提交紀錄檢視器 · image-comparison</p>
+    </footer>
+  </div>
+</body>
+</html>
