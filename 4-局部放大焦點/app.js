@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentOriginX = 0.5; // 0.0 - 1.0
   let isDraggingBar = false;
 
+  let dragStartY = 0;
+  let dragStartTime = 0;
+  let clickAnimId = null;
+
   // --- Focal Points Map for Chapters ---
   const focalPoints = {
     1: { active: false, scale: 1.0, originX: 0.5, originY: 0.5 },
@@ -30,12 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /**
-   * Recalculates the internal canvas clip percentage so that the visual boundary
-   * on screen aligns EXACTLY with barScreenPercent regardless of zoom scale or transform-origin.
+   * Recalculates internal canvas clip percentage so visual boundary
+   * aligns 100% pixel-perfectly with sliderHandle.
    */
   function applyClipPathAndBar(isAnimated = false) {
-    // Math: ScreenPos = OriginY + Scale * (CanvasPos - OriginY)
-    // Therefore: CanvasPos = OriginY + (ScreenPos - OriginY) / Scale
     const barFraction = barScreenPercent / 100;
     const clipFraction = currentOriginY + (barFraction - currentOriginY) / currentScale;
     const clipPercent = Math.max(0, Math.min(100, clipFraction * 100));
@@ -53,7 +55,40 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize bar at center 50%
   applyClipPathAndBar(false);
 
-  // --- Pointer Drag Handling for Bar ---
+  // --- Smooth Slide to Opposite Side on Click ---
+  function animateClickSlide(targetPercent, duration = 800) {
+    if (clickAnimId) cancelAnimationFrame(clickAnimId);
+
+    const startPercent = barScreenPercent;
+    const distance = targetPercent - startPercent;
+    const startTime = performance.now();
+
+    function step(now) {
+      if (isDraggingBar) return;
+
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      barScreenPercent = startPercent + distance * ease;
+      applyClipPathAndBar(false);
+
+      if (progress < 1) {
+        clickAnimId = requestAnimationFrame(step);
+      }
+    }
+
+    clickAnimId = requestAnimationFrame(step);
+  }
+
+  function toggleBarToOppositeSide() {
+    // If bar is on lower half (>= 50%), slide to top (15%)
+    // If bar is on upper half (< 50%), slide to bottom (85%)
+    const target = barScreenPercent >= 50 ? 15 : 85;
+    animateClickSlide(target, 850);
+  }
+
+  // --- Pointer Drag & Click Handling ---
   function handlePointerMove(e) {
     if (!isDraggingBar) return;
     const y = e.clientY;
@@ -64,6 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sliderHandle.addEventListener('pointerdown', (e) => {
     isDraggingBar = true;
+    dragStartY = e.clientY;
+    dragStartTime = Date.now();
+    if (clickAnimId) cancelAnimationFrame(clickAnimId);
+
     sliderHandle.classList.add('dragging');
     try {
       sliderHandle.setPointerCapture(e.pointerId);
@@ -77,6 +116,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isDraggingBar) {
       isDraggingBar = false;
       sliderHandle.classList.remove('dragging');
+
+      const deltaY = Math.abs(e.clientY - dragStartY);
+      const elapsed = Date.now() - dragStartTime;
+
+      // Click detection: minimal Y movement & short touch duration
+      if (deltaY < 6 && elapsed < 350) {
+        toggleBarToOppositeSide();
+      }
+
       try {
         if (e.pointerId !== undefined) {
           sliderHandle.releasePointerCapture(e.pointerId);
@@ -90,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Keyboard accessibility for bar
   sliderHandle.addEventListener('keydown', (e) => {
+    if (clickAnimId) cancelAnimationFrame(clickAnimId);
     let step = 2;
     if (e.shiftKey) step = 10;
 
@@ -101,6 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       barScreenPercent = Math.min(100, barScreenPercent + step);
       applyClipPathAndBar(false);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleBarToOppositeSide();
     } else if (e.key === 'Home') {
       e.preventDefault();
       barScreenPercent = 0;
