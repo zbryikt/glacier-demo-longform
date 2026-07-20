@@ -223,38 +223,38 @@
     <header>
       <span class="header-badge"><i class="ri-stack-line"></i> Version Showcase</span>
       <h1>圖片比較專案 - 演進歷程藝廊</h1>
-      <p class="subtitle">點擊下方卡片可直接體驗不同階段開發的圖片比較與 Scrollytelling 視覺互動效果。</p>
+      <p class="subtitle">點擊下方卡片可直接體驗不同階段開發的圖片比較、Scrollytelling 與 Explorable Explanation 視覺互動效果。</p>
     </header>
 
     <!-- Version Gallery Grid -->
     <main class="gallery-grid">
       
-      <!-- Version 1 -->
-      <article class="version-card">
-        <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 1</span>
-          <img src="1-工具模式/thumbnail.png" alt="1-工具模式 截圖預覽" loading="eager">
+      <!-- Version 5 EE -->
+      <article class="version-card" style="grid-column: 1 / -1;">
+        <div class="thumbnail-container" style="aspect-ratio: 21 / 9;">
+          <span class="version-tag-overlay" style="background:rgba(56,189,248,0.25); color:#7dd3fc; border-color:#38bdf8">VERSION 5 (Explorable Explanation)</span>
+          <img src="5-ee/thumbnail.png" alt="5-ee 探索式解釋網頁 截圖預覽" loading="eager">
         </div>
         <div class="card-body">
-          <h2 class="card-title"><i class="ri-tools-line"></i> 1-工具模式</h2>
-          <p class="card-desc">全功能圖片比對獨立工具箱。包含左右/上下分割滑桿、透明度重疊、並排檢視、按住切換等多種比較模式，並支援自訂圖片上傳與全螢幕操作。</p>
-          <a class="btn-open" href="1-工具模式/index.html">
-            <i class="ri-external-link-line"></i> 開啟 1-工具模式 網頁
+          <h2 class="card-title" style="color:#38bdf8"><i class="ri-pulse-line"></i> 5-ee (Explorable Explanation 探索式解釋)</h2>
+          <p class="card-desc">依據 Bret Victor 理念與 ee.md 導引設計。包含「1. 氣溫與平衡線 ELA 拆解」、「2. 100 年氣候延遲反應」、「3. 冰川高度正回饋雙模型比較」、「4. 降雪與升溫矩陣熱圖」、「5. 自由沙盒實驗室」。包含 2D 冰川動態剖面、平衡線與即時體積變化曲線。</p>
+          <a class="btn-open" href="5-ee/index.html" style="background:var(--accent-primary); color:#0f172a; font-weight:700">
+            <i class="ri-play-circle-line"></i> 開啟 5-ee 探索式解釋互動網頁
           </a>
         </div>
       </article>
 
-      <!-- Version 2 -->
+      <!-- Version 4 -->
       <article class="version-card">
         <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 2</span>
-          <img src="2-左右對比scrollytelling/thumbnail.png" alt="2-左右對比 截圖預覽" loading="eager">
+          <span class="version-tag-overlay">VERSION 4</span>
+          <img src="4-局部放大焦點/thumbnail.png" alt="4-局部放大焦點 截圖預覽" loading="eager">
         </div>
         <div class="card-body">
-          <h2 class="card-title"><i class="ri-layout-column-line"></i> 2-左右對比 Scrollytelling</h2>
-          <p class="card-desc">左右雙欄滾動敘事架構。左欄為 Sticky 固定比較圖幅，右欄為 10 段冰川消融故事。隨著頁面向下滑動，分割線會自下向上自動 reveal 融化後的冰川地貌。</p>
-          <a class="btn-open" href="2-左右對比scrollytelling/index.html">
-            <i class="ri-external-link-line"></i> 開啟 2-左右對比網頁
+          <h2 class="card-title"><i class="ri-search-eye-line"></i> 4-局部放大焦點 (Markdown 解耦)</h2>
+          <p class="card-desc">右側文章排版，騰出左側 60% 以上寬廣露圖空間。滾動時底圖會自動進行局部放大 (Zoom) 並跳出紅圈焦點標籤與說明。文章與焦點配置 100% 寫於獨立 story.md 檔案中。</p>
+          <a class="btn-open" href="4-局部放大焦點/index.html">
+            <i class="ri-external-link-line"></i> 開啟 4-局部放大焦點網頁
           </a>
         </div>
       </article>
@@ -274,17 +274,32 @@
         </div>
       </article>
 
-      <!-- Version 4 -->
+      <!-- Version 2 -->
       <article class="version-card">
         <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 4</span>
-          <img src="4-局部放大焦點/thumbnail.png" alt="4-局部放大焦點 截圖預覽" loading="eager">
+          <span class="version-tag-overlay">VERSION 2</span>
+          <img src="2-左右對比scrollytelling/thumbnail.png" alt="2-左右對比 截圖預覽" loading="eager">
         </div>
         <div class="card-body">
-          <h2 class="card-title"><i class="ri-search-eye-line"></i> 4-局部放大焦點</h2>
-          <p class="card-desc">右側文章排版，騰出左側 60% 以上寬廣露圖空間。滾動時底圖會自動進行局部放大 (Zoom) 並跳出紅圈焦點標籤與說明。分割 Bar 為獨立預設置中，支援點擊自動滑動與手動拖拽對齊。</p>
-          <a class="btn-open" href="4-局部放大焦點/index.html">
-            <i class="ri-external-link-line"></i> 開啟 4-局部放大焦點網頁
+          <h2 class="card-title"><i class="ri-layout-column-line"></i> 2-左右對比 Scrollytelling</h2>
+          <p class="card-desc">左右雙欄滾動敘事架構。左欄為 Sticky 固定比較圖幅，右欄為 10 段冰川消融故事。隨著頁面向下滑動，分割線會自下向上自動 reveal 融化後的冰川地貌。</p>
+          <a class="btn-open" href="2-左右對比scrollytelling/index.html">
+            <i class="ri-external-link-line"></i> 開啟 2-左右對比網頁
+          </a>
+        </div>
+      </article>
+
+      <!-- Version 1 -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay">VERSION 1</span>
+          <img src="1-工具模式/thumbnail.png" alt="1-工具模式 截圖預覽" loading="eager">
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><i class="ri-tools-line"></i> 1-工具模式</h2>
+          <p class="card-desc">全功能圖片比對獨立工具箱。包含左右/上下分割滑桿、透明度重疊、並排檢視、按住切換等多種比較模式，並支援自訂圖片上傳與全螢幕操作。</p>
+          <a class="btn-open" href="1-工具模式/index.html">
+            <i class="ri-external-link-line"></i> 開啟 1-工具模式 網頁
           </a>
         </div>
       </article>

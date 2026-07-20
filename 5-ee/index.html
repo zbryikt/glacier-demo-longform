@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>冰川消融：探索式解釋網頁 (Explorable Explanation)</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Remixicon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Sticky Navigation & Stage Selector -->
+  <header class="ee-header">
+    <div class="brand">
+      <i class="ri-pulse-line logo-icon"></i>
+      <span class="brand-title">冰川動態：Explorable Explanation</span>
+    </div>
+    <nav class="stage-tabs">
+      <button class="tab-btn active" data-stage="1">1. 氣溫與平衡線</button>
+      <button class="tab-btn" data-stage="2">2. 時間與延遲</button>
+      <button class="tab-btn" data-stage="3">3. 高度正回饋</button>
+      <button class="tab-btn" data-stage="4">4. 質量收支矩陣</button>
+      <button class="tab-btn" data-stage="5">5. 自由探索沙盒</button>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main class="ee-container">
+
+    <!-- Left Control & Guided Narrative Panel -->
+    <aside class="control-panel">
+
+      <!-- Stage 1 Panel -->
+      <section class="stage-section active" id="stage1Section">
+        <div class="section-badge">STAGE 1 · 核心物理</div>
+        <h2>為什麼氣溫只升高一點，冰川就大量退縮？</h2>
+
+        <!-- Prediction Box -->
+        <div class="prediction-box" id="predBox1">
+          <div class="pred-question">
+            <i class="ri-questionnaire-line"></i> <strong>直覺預測：</strong> 將氣溫提高 1.0°C，你認為冰川會縮短多少？
+          </div>
+          <div class="pred-options">
+            <button class="pred-btn" data-val="10">微幅縮短 (< 10%)</button>
+            <button class="pred-btn" data-val="30">中度退縮 (~ 30%)</button>
+            <button class="pred-btn" data-val="60">大幅融化 (> 50%)</button>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="control-group">
+          <label for="tempSlider1">
+            <span>環境溫度變化 (&Delta;T)</span>
+            <span class="value-badge" id="tempVal1">+1.0°C</span>
+          </label>
+          <input type="range" id="tempSlider1" min="-2.0" max="4.0" step="0.1" value="1.0">
+        </div>
+
+        <div class="action-bar">
+          <button class="primary-btn" id="playBtn1">
+            <i class="ri-play-fill"></i> 執行模擬 (Simulate)
+          </button>
+          <button class="secondary-btn" id="resetBtn1">重置</button>
+        </div>
+
+        <!-- Dynamic Explanation Callout -->
+        <div class="explanation-card" id="expCard1">
+          <div class="exp-title"><i class="ri-lightbulb-line"></i> 因果機制拆解</div>
+          <p id="expText1">
+            升溫使<strong>平衡線 (ELA)</strong> 向上移動。原本能累積降雪的區域變成了融化區，導致冰川每年的<strong>支出（融冰）小於收入（積雪）</strong>，因而持續退縮。
+          </p>
+        </div>
+      </section>
+
+      <!-- Stage 2 Panel -->
+      <section class="stage-section" id="stage2Section">
+        <div class="section-badge">STAGE 2 · 慣性與延遲</div>
+        <h2>氣溫停止上升後，冰川會立刻停止退縮嗎？</h2>
+
+        <!-- Prediction Box -->
+        <div class="prediction-box" id="predBox2">
+          <div class="pred-question">
+            <i class="ri-time-line"></i> <strong>情境預測：</strong> 氣溫在第 20 年停止上升後，冰川會？
+          </div>
+          <div class="pred-options">
+            <button class="pred-btn" data-val="stop">立刻停止退縮</button>
+            <button class="pred-btn" data-val="lag">繼續退縮數十年</button>
+            <button class="pred-btn" data-val="recover">恢復原來大小</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>
+            <span>暖化情境</span>
+            <span class="value-badge">+2.0°C (第 20 年封頂)</span>
+          </label>
+        </div>
+
+        <div class="action-bar">
+          <button class="primary-btn" id="playBtn2">
+            <i class="ri-history-line"></i> 觀察 100 年氣候延遲反應
+          </button>
+        </div>
+
+        <div class="explanation-card" id="expCard2">
+          <div class="exp-title"><i class="ri-time-line"></i> 時間延遲與體積失衡</div>
+          <p id="expText2">
+            氣候改變是瞬間的，但巨大冰體調整形狀需要幾十年時間。在新的氣候條件下，目前的冰川仍然過大，所以<strong>即使溫度停止上升，它仍會繼續退縮直到達到新的平衡狀態</strong>。
+          </p>
+        </div>
+      </section>
+
+      <!-- Stage 3 Panel -->
+      <section class="stage-section" id="stage3Section">
+        <div class="section-badge">STAGE 3 · 正回饋效應</div>
+        <h2>當冰川變薄後，融化會加速嗎？</h2>
+
+        <div class="prediction-box" id="predBox3">
+          <div class="pred-question">
+            <i class="ri-repeat-line"></i> <strong>比較模型：</strong> 冰川融化導致表面高度下降，進入更溫暖的低海拔空氣中。
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="primary-btn" id="playBtn3">
+            <i class="ri-git-commit-line"></i> 疊加比較：無回饋 vs 有高度回饋
+          </button>
+        </div>
+
+        <div class="explanation-card" id="expCard3">
+          <div class="exp-title"><i class="ri-fire-line"></i> 高度-溫度正回饋 (Elevation Feedback)</div>
+          <p id="expText3">
+            兩條曲線前 10 年差異不大，但 30 年後差距迅速拉大！因為<strong>冰川變薄使表面所處環境更暖，進一步加速融化</strong>，形成自我強化的連鎖反應。
+          </p>
+        </div>
+      </section>
+
+      <!-- Stage 4 Panel -->
+      <section class="stage-section" id="stage4Section">
+        <div class="section-badge">STAGE 4 · 質量收支矩陣</div>
+        <h2>降雪增加，能抵銷氣溫上升嗎？</h2>
+
+        <div class="control-group">
+          <label for="snowSlider4">
+            <span>降雪量變化 (&Delta;Snow)</span>
+            <span class="value-badge" id="snowVal4">+20%</span>
+          </label>
+          <input type="range" id="snowSlider4" min="-40" max="60" step="5" value="20">
+        </div>
+
+        <div class="control-group">
+          <label for="tempSlider4">
+            <span>氣溫上升 (&Delta;T)</span>
+            <span class="value-badge" id="tempVal4">+2.0°C</span>
+          </label>
+          <input type="range" id="tempSlider4" min="0" max="4.0" step="0.5" value="2.0">
+        </div>
+
+        <div class="action-bar">
+          <button class="primary-btn" id="genMatrixBtn">
+            <i class="ri-grid-fill"></i> 自動生成 16 組條件矩陣熱圖
+          </button>
+        </div>
+
+        <!-- Heatmap Container -->
+        <div class="matrix-heatmap-container" id="heatmapContainer">
+          <div class="heatmap-title">溫升 vs 降雪 冰川穩定度矩陣</div>
+          <div class="heatmap-grid" id="heatmapGrid"></div>
+        </div>
+      </section>
+
+      <!-- Stage 5 Panel -->
+      <section class="stage-section" id="stage5Section">
+        <div class="section-badge">STAGE 5 · 自由探索沙盒</div>
+        <h2>自訂氣候情境實驗室</h2>
+
+        <div class="control-group">
+          <label for="sbTemp">
+            <span>氣溫變化 (&Delta;T)</span>
+            <span class="value-badge" id="sbTempVal">+1.5°C</span>
+          </label>
+          <input type="range" id="sbTemp" min="-2.0" max="5.0" step="0.1" value="1.5">
+        </div>
+
+        <div class="control-group">
+          <label for="sbSnow">
+            <span>降雪變化 (&Delta;Snow)</span>
+            <span class="value-badge" id="sbSnowVal">+0%</span>
+          </label>
+          <input type="range" id="sbSnow" min="-50" max="50" step="5" value="0">
+        </div>
+
+        <div class="control-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="sbFeedback" checked>
+            <span>啟用冰川高度正回饋機制</span>
+          </label>
+        </div>
+
+        <div class="action-bar">
+          <button class="primary-btn" id="sbSimulateBtn">
+            <i class="ri-play-circle-line"></i> 執行 100 年動態模擬
+          </button>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- Right Visualization Stage & Real-Time Canvas -->
+    <section class="viz-stage">
+      
+      <!-- Top Metrics Bar -->
+      <div class="metrics-bar">
+        <div class="metric-card">
+          <span class="metric-label">模擬時間</span>
+          <span class="metric-val" id="metYear">Year 0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">平衡線高度 (ELA)</span>
+          <span class="metric-val" id="metELA">2,000 m</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">冰川相對體積</span>
+          <span class="metric-val" id="metVol">100 %</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">年度質量收支</span>
+          <span class="metric-val" id="metBalance">0.0 (平衡)</span>
+        </div>
+      </div>
+
+      <!-- Mountain & Glacier 2D Canvas Profile -->
+      <div class="canvas-wrapper">
+        <canvas id="glacierCanvas" width="800" height="420"></canvas>
+        <div class="canvas-legend">
+          <span class="leg-item"><span class="color-box bg-snow"></span> 降雪累積區 (+Mass)</span>
+          <span class="leg-item"><span class="color-box bg-melt"></span> 融化區 (-Mass)</span>
+          <span class="leg-item"><span class="color-box bg-ela"></span> ── 平衡線 ELA</span>
+        </div>
+      </div>
+
+      <!-- Real-time Time Series Charts -->
+      <div class="charts-wrapper">
+        <div class="chart-box">
+          <div class="chart-title"><i class="ri-line-chart-line"></i> 冰川體積隨時間變化曲線 (Volume over Time)</div>
+          <canvas id="volumeChart" width="760" height="150"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
