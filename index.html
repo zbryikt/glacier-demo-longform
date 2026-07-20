@@ -3,298 +3,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>圖片比較專案 - 版本展示藝廊 (Image Comparison Gallery)</title>
+  <title>消失的白色巨獸 - 局部放大與焦點探索</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <!-- Remixicon -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-  <style>
-    :root {
-      --bg-dark: #070a12;
-      --bg-card: rgba(18, 26, 43, 0.75);
-      --bg-card-hover: rgba(26, 38, 62, 0.9);
-      --accent-primary: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.35);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: rgba(255, 255, 255, 0.12);
-      --border-hover: rgba(56, 189, 248, 0.5);
-      --radius-lg: 20px;
-      --radius-md: 12px;
-      --font-family: 'Outfit', 'Noto Sans TC', sans-serif;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: var(--font-family);
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
-        radial-gradient(at 90% 90%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
-      background-attachment: fixed;
-      color: var(--text-main);
-      min-height: 100vh;
-      padding: 3rem 1.5rem;
-      display: flex;
-      justify-content: center;
-      line-height: 1.6;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1200px;
-      display: flex;
-      flex-direction: column;
-      gap: 2.5rem;
-    }
-
-    /* Header */
-    header {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .header-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.35rem 0.9rem;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--accent-primary);
-      border-radius: 30px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      max-width: 680px;
-    }
-
-    /* Grid Gallery */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
-      gap: 2rem;
-    }
-
-    /* Version Card */
-    .version-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .version-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.15);
-    }
-
-    /* Thumbnail Preview Container */
-    .thumbnail-container {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      overflow: hidden;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .thumbnail-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.4s ease;
-    }
-
-    .version-card:hover .thumbnail-container img {
-      transform: scale(1.03);
-    }
-
-    .version-tag-overlay {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      background: rgba(7, 10, 18, 0.85);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      padding: 0.3rem 0.75rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      border-radius: var(--radius-md);
-      z-index: 5;
-    }
-
-    /* Card Content Body */
-    .card-body {
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      flex-grow: 1;
-    }
-
-    .card-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-desc {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      line-height: 1.65;
-    }
-
-    /* Action Link Button */
-    .btn-open {
-      margin-top: auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--accent-primary);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      border-radius: var(--radius-md);
-      transition: all 0.2s ease;
-    }
-
-    .btn-open:hover {
-      background: var(--accent-primary);
-      color: #0f172a;
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border-color);
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    @media (max-width: 640px) {
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <span class="header-badge"><i class="ri-stack-line"></i> Version Showcase</span>
-      <h1>圖片比較專案 - 演進歷程藝廊</h1>
-      <p class="subtitle">點擊下方卡片可直接體驗不同階段開發的圖片比較與 Scrollytelling 視覺互動效果。</p>
+  <!-- Top Floating Navigation Bar -->
+  <nav class="scrolly-nav">
+    <div class="nav-brand">
+      <i class="ri-temp-cold-line logo-icon"></i>
+      <span>消失的白色巨獸：冰川消融史</span>
+    </div>
+    <div class="scroll-progress-container">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Fullscreen Fixed Background Stage -->
+  <div class="fixed-bg-stage" id="bgStage">
+    <!-- Zoomable Inner Canvas Layer (ONLY Images Scale Here) -->
+    <div class="zoom-canvas" id="zoomCanvas">
+      <div class="comparison-wrapper vertical" id="comparisonWrapper">
+        <div class="img-wrapper before-wrapper">
+          <img id="beforeImg" src="before.jpg" alt="冰川消融前 (Before Glacier)" loading="eager">
+          <span class="badge badge-before"><i class="ri-history-line"></i> 消融前 (BEFORE)</span>
+        </div>
+
+        <div class="img-wrapper after-wrapper" id="afterWrapper">
+          <img id="afterImg" src="after.jpg" alt="冰川消融後 (After Glacier)" loading="eager">
+          <span class="badge badge-after"><i class="ri-alert-line"></i> 消融後 (AFTER)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Red Circle Focus Marker Callout Layer -->
+    <div class="focus-marker" id="focusMarker">
+      <div class="marker-pulse-ring"></div>
+      <div class="marker-dot"></div>
+      <div class="marker-callout" id="markerCallout">
+        <i class="ri-search-eye-line"></i> <span id="markerText">重點觀察區</span>
+      </div>
+    </div>
+
+    <!-- Horizontal Interactive Draggable Divider Handle (OUTSIDE Zoom Canvas, Scale 1.0, Left-Anchored Handle Button) -->
+    <div class="slider-handle" id="sliderHandle" tabindex="0" aria-label="可拖動冰川比較分割線">
+      <div class="handle-line"></div>
+      <div class="handle-button" id="handleButton" title="上下拖動比較圖片">
+        <i class="ri-arrow-up-s-line"></i>
+        <i class="ri-arrow-down-s-line"></i>
+      </div>
+      <div class="handle-line"></div>
+    </div>
+  </div>
+
+  <!-- Foreground Story Overlay (Right Aligned, 60% Left Area Exposed) -->
+  <div class="story-overlay" id="storyOverlay">
+    <header class="hero-section">
+      <div class="hero-card">
+        <span class="hero-tag"><i class="ri-global-line"></i> 互動焦點與滾動敘事</span>
+        <h1>消失的白色巨獸</h1>
+        <p class="hero-desc">向下滾動可隨文章聚焦觀察冰川細節。左側分割按鈕可自由上下拖動比較前後變化。</p>
+        <div class="scroll-down-hint">
+          <span>向下滾動開始探索</span>
+          <i class="ri-arrow-down-double-line animated-arrow"></i>
+        </div>
+      </div>
     </header>
 
-    <!-- Version Gallery Grid -->
-    <main class="gallery-grid">
-      
-      <!-- Version 1 -->
-      <article class="version-card">
-        <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 1</span>
-          <img src="1-工具模式/thumbnail.png" alt="1-工具模式 截圖預覽" loading="eager">
-        </div>
-        <div class="card-body">
-          <h2 class="card-title"><i class="ri-tools-line"></i> 1-工具模式</h2>
-          <p class="card-desc">全功能圖片比對獨立工具箱。包含左右/上下分割滑桿、透明度重疊、並排檢視、按住切換等多種比較模式，並支援自訂圖片上傳與全螢幕操作。</p>
-          <a class="btn-open" href="1-工具模式/index.html">
-            <i class="ri-external-link-line"></i> 開啟 1-工具模式 網頁
-          </a>
-        </div>
+    <main class="narrative-stream">
+      <article class="narrative-card active" data-step="1">
+        <div class="step-badge">Chapter 01</div>
+        <h2>序章：千年寂靜的冰封巨獸</h2>
+        <p class="chapter-content">
+          在地球的南北極圈與高海拔高山之上，沉睡著覆蓋萬年的古老冰川。這些巨大的冰雪體系是由數千年乃至數萬年累積的降雪，在自身的巨大重力壓縮下逐步結晶、密實而形成的藍色巨大冰體。它們不僅是地球上最壯麗的自然奇觀之一，庫更是保存了地球歷史氣候變遷密碼的「天然冰芯檔案庫」。在工業革命之前的數千年間，極地的降雪補充量與夏季的自然融化量一直保持著微妙而完美的動態平衡。冰川如同巨大的白雪屏障，將高達 80% 至 90% 的太陽輻射反射回太空，有效地維持著全冰河期與間冰期以來地球氣候系統的穩定與涼爽。然而，這份維持了千百年的寂靜平衡，卻在過去一個世紀內面臨著前所未有的劇烈考驗。
+        </p>
       </article>
 
-      <!-- Version 2 -->
-      <article class="version-card">
-        <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 2</span>
-          <img src="2-左右對比scrollytelling/thumbnail.png" alt="2-左右對比 截圖預覽" loading="eager">
-        </div>
-        <div class="card-body">
-          <h2 class="card-title"><i class="ri-layout-column-line"></i> 2-左右對比 Scrollytelling</h2>
-          <p class="card-desc">左右雙欄滾動敘事架構。左欄為 Sticky 固定比較圖幅，右欄為 10 段冰川消融故事。隨著頁面向下滑動，分割線會自下向上自動 reveal 融化後的冰川地貌。</p>
-          <a class="btn-open" href="2-左右對比scrollytelling/index.html">
-            <i class="ri-external-link-line"></i> 開啟 2-左右對比網頁
-          </a>
-        </div>
+      <article class="narrative-card" data-step="2">
+        <div class="step-badge">Chapter 02</div>
+        <h2>第一章：工業曙光與溫室氣體的悄然升起</h2>
+        <p class="chapter-content">
+          自 18 世紀中葉工業革命爆發以來，人類對煤炭、石油與天然氣等化石燃料的依賴呈現爆發性增長。大量燃燒化石燃料釋放出海量的二氧化碳、甲烷與一氧化二氮等溫室氣體，這些氣體如同一張逐漸加厚的無形毛毯，將地表向外輻射的熱能牢牢鎖在大氣層之內。大氣中二氧化碳濃度從工業化前的約 280 ppm 驟升至當前的 420 ppm 以上，創下了近三百年萬年來的最高紀錄。全球平均氣溫相較於工業化前水平已上升了約 1.2°C。這看似微小的溫度變化，對於對熱敏度極高的冰雪世界而言，卻是致命的打擊。原本穩定結冰的季節被大幅縮短，而夏季高溫融化的時間則顯著延長，全球冰川開始顯現出大規模且不可逆轉的退縮跡象。
+        </p>
       </article>
 
-      <!-- Version 3 -->
-      <article class="version-card">
-        <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 3</span>
-          <img src="3-底圖式scrollytelling/thumbnail.png" alt="3-底圖式 截圖預覽" loading="eager">
-        </div>
-        <div class="card-body">
-          <h2 class="card-title"><i class="ri-fullscreen-line"></i> 3-底圖式 Scrollytelling</h2>
-          <p class="card-desc">全螢幕滿版底圖沉浸式敘事。圖片固定置底為全螢幕背景，文章卡片單欄置中呈現半透明玻璃質感。採用極簡直角、無邊框、無陰影設計，且段落間距加大至 75vh 以利看圖。</p>
-          <a class="btn-open" href="3-底圖式scrollytelling/index.html">
-            <i class="ri-external-link-line"></i> 開啟 3-底圖式網頁
-          </a>
-        </div>
+      <article class="narrative-card" data-step="3">
+        <div class="step-badge">Chapter 03</div>
+        <h2>第二章：阿爾卑斯山的雪線退縮</h2>
+        <p class="chapter-content">
+          歐洲阿爾卑斯山脈作為全球研究最詳盡的高山冰川區域，成為了氣候變遷最直接的目擊者。著名的阿萊奇冰川與羅訥冰川，在過去百年內長度縮短了數公里，厚度更是減少了上百公尺。原本終年積雪的山頂雪線正以每年數公尺的速度向更高海拔攀升。失去了冰川重壓與凍結作用的高山岩壁，開始頻繁出現大規模的崩塌與滑坡，危及山腳下歷史悠久的瑞士與法式小鎮。科學家警告，若當前暖化趨勢持續，阿爾卑斯山脈超過 80% 的小冰川將在 2050 年前完全消失。曾經吸引無數探險家與觀光客的壯麗冰藍色世界，如今正以肉眼可見的速度轉變為荒涼的裸露岩石與泥沙堆積區。
+        </p>
       </article>
 
-      <!-- Version 4 -->
-      <article class="version-card">
-        <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 4</span>
-          <img src="4-局部放大焦點/thumbnail.png" alt="4-局部放大焦點 截圖預覽" loading="eager">
-        </div>
-        <div class="card-body">
-          <h2 class="card-title"><i class="ri-search-eye-line"></i> 4-局部放大焦點</h2>
-          <p class="card-desc">右側文章排版，騰出左側 60% 以上寬廣露圖空間。滾動時底圖會自動進行局部放大 (Zoom) 並跳出紅圈焦點標籤與說明。分割 Bar 為獨立預設置中，支援點擊自動滑動與手動拖拽對齊。</p>
-          <a class="btn-open" href="4-局部放大焦點/index.html">
-            <i class="ri-external-link-line"></i> 開啟 4-局部放大焦點網頁
-          </a>
-        </div>
+      <article class="narrative-card" data-step="4">
+        <div class="step-badge">Chapter 04</div>
+        <h2>第三章：格陵蘭大冰原的崩解悲歌</h2>
+        <p class="chapter-content">
+          深入北極圈的格陵蘭島，擁有全球僅次於南極的第二大冰原。若格陵蘭大冰原全部融化，足以使全球海平面上升高達 7 公尺。近二十年來的衛星觀測數據顯示，格陵蘭冰原的融化速度比 1990 年代加快了將近七倍。夏天的極地高溫使得冰原表面形成成千上萬個湛藍色的「冰前湖」與深邃的「冰井」。融化的水流順著冰井直通數千公尺深的地底，充當了冰川底部與岩床之間的滑潤劑，進一步加速了巨大冰體向海洋滑動與崩解的速度。巨大的冰山從冰川前緣轟然斷裂崩落入海，發出如同雷鳴般的隆隆巨響，宣告著這片北極古老冰原正步入崩解的惡性循環之中。
+        </p>
       </article>
 
+      <article class="narrative-card" data-step="5">
+        <div class="step-badge">Chapter 05</div>
+        <h2>第四章：南極「末日冰川」斯韋特斯的危機</h2>
+        <p class="chapter-content">
+          南半球的南極大陸儲存了地球上約 90% 的冰雪資源。然而位於西南極的斯韋特斯冰川，因其巨大的規模與不穩定的地形構造，被科學界憂心地稱為「末日冰川」。這座面積相當於英格蘭大小的冰川，其基底深埋於海平面以下的窪地中。海洋深處溫暖的水流正悄悄滲入冰架下方的接觸線，從底部不斷侵蝕與掏空冰川的根基。一旦斯韋特斯冰川徹底塌陷，不僅自身會導致全球海平面上升約 65 公分，更將失去支撐整個西南極冰原的天然攔河壩作用，進而引發周邊廣袤冰川連鎖式的崩塌，對全球海岸線城市構成毀滅性的潛在威脅。
+        </p>
+      </article>
+
+      <article class="narrative-card" data-step="6">
+        <div class="step-badge">Chapter 06</div>
+        <h2>第五章：極地永凍層融化與甲烷釋放</h2>
+        <p class="chapter-content">
+          隨著高緯度地區冰川與積雪的快速消退，深藏於北極圈西伯利亞與阿拉斯加地下的永凍土層也開始大面積解凍。這些沉封了數百萬年的凍土中，埋藏著大量未完全分解的古代植物與動物殘骸，估計其中所蘊含的碳總量高達現今大氣中碳含量的兩倍。當凍土融化，厭氧微生物便開始活躍地分解這些有機物，釋放出溫室效應強度為二氧化碳 28 倍以上的甲烷氣體。這種「氣候回饋機制」意味著冰川與凍土的融化將加速釋放更多溫室氣體，推升全球氣溫進一步上升，進而導致更多冰雪融化。人類可能正處於觸發這個不可逆惡性循環臨界點的危險邊緣。
+        </p>
+      </article>
+
+      <article class="narrative-card" data-step="7">
+        <div class="step-badge">Chapter 07</div>
+        <h2>第六章：亞洲水塔的乾涸危機</h2>
+        <p class="chapter-content">
+          喜馬拉雅山脈、天山山脈與青藏高原被譽為地球的「第三極」，這裡的高山冰川是長江、黃河、印度河、恆河、湄公河等數條亞洲大河的發源地，哺育著全球超過 19 億的人口與廣袤的農業灌溉區。然而，第三極地區的升溫速度是全球平均水平的兩倍以上。雖然短期內冰川加速融化會導致河流逕流量增加甚至引發冰湖潰決洪水，但從中長期來看，一旦冰川儲量耗盡，下游數億人口將面臨極度嚴峻的季節性水資源短缺與乾旱威脅。這不僅直接威脅到糧食安全與水力發電，更可能引發跨國界水資源爭奪的政治與區域衝突危機。
+        </p>
+      </article>
+
+      <article class="narrative-card" data-step="8">
+        <div class="step-badge">Chapter 08</div>
+        <h2>第七章：海洋升溫與全球海岸線的浩劫</h2>
+        <p class="chapter-content">
+          陸地冰川融化注入海洋的海水量，加上海水因升溫而發生的熱膨脹效應，共同推升了全球海平面的快速上升。自 1900 年以來，全球平均海平面已上升了超過 20 公分，且上升速率正在逐年加快。對於紐約、倫敦、東京、上海、台北等沿海大都會，以及圖瓦盧、馬爾地夫等低窪島國而言，海平面上升意味著頻率更高且破壞力更強的風暴潮、海水倒灌與地下水鹽鹼化。許多小島國家甚至面臨國土完全沉入海底、居民被迫成為「氣候難民」的生存危機。冰川的消融不再只是遙遠極地的故事，而是直接重塑著全球人類社會的地理邊界與經濟命脈。
+        </p>
+      </article>
+
+      <article class="narrative-card" data-step="9">
+        <div class="step-badge">Chapter 09</div>
+        <h2>第八章：生態系的連鎖反應與生物多樣性喪失</h2>
+        <p class="chapter-content">
+          極地與高山冰川的退縮，正劇烈地改寫著極地生態系的食物網與生物棲地。在北極，海冰與冰川前緣是北極熊獵捕海豹的主要平台，海冰面積的減少逼使北極熊必須游過漫長且危險的水域，導致大量北極熊因飢餓與體力不支而死亡。在南極，依賴海冰繁殖與躲避天敵的企鵝種群正面臨幼鳥死亡率激增的慘劇。此外，冰川融水改變了沿岸海水的鹽度與溫度，影響了作為整個極地生態系基石的南極磷蝦的生長。從微小的浮游生物到巨大的藍鯨，這條維持了無數生命的脆弱生態鏈正在快速斷裂。
+        </p>
+      </article>
+
+      <article class="narrative-card" data-step="10">
+        <div class="step-badge">Chapter 10</div>
+        <h2>終章：人類的抉擇與拯救冰川的最後窗口</h2>
+        <p class="chapter-content">
+          站在氣候變遷的十字路口，冰川的消融是地球向人類發出的最嚴正警告。科學界明確指出，將全球升溫控制在 1.5°C 之內，是減緩冰川全面崩解與保護全球氣候系統穩定的關鍵防線。這需要全球各國展現前所未有的決心，加速推動能源轉型、淘汰化石燃料、擴大再生能源比例，並落實森林保護與碳捕集技術。雖然部分小冰川的消失已難以避免，但我們每一分的努力、每一次碳排放的減少，都能為格陵蘭與南極的大冰原爭取珍貴的時間。拯救冰川，本質上就是拯救我們人類自身在這顆藍色星球上的永續未來。
+        </p>
+      </article>
     </main>
 
-    <!-- Footer -->
-    <footer>
-      <p>© 圖片比較與滾動敘事專案藝廊 (Image Comparison Gallery)</p>
+    <footer class="app-footer">
+      <p>© 氣候變遷視覺化專題 · 全螢幕背景焦點探索 Scrollytelling</p>
     </footer>
   </div>
+
+  <script src="app.js"></script>
 </body>
 </html>

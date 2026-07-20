@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>消失的白色巨獸 - 局部放大與焦點探索</title>
+  <title>消失的白色巨獸 - 全螢幕滾動敘事與焦點探索</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,17 +28,29 @@
 
   <!-- Fullscreen Fixed Background Stage -->
   <div class="fixed-bg-stage" id="bgStage">
-    <!-- Zoomable Inner Canvas Layer (ONLY Images Scale Here) -->
+    <!-- Zoomable Inner Canvas Layer -->
     <div class="zoom-canvas" id="zoomCanvas">
       <div class="comparison-wrapper vertical" id="comparisonWrapper">
+        <!-- Before Image (Pristine Glacier - Bottom/Background) -->
         <div class="img-wrapper before-wrapper">
           <img id="beforeImg" src="before.jpg" alt="冰川消融前 (Before Glacier)" loading="eager">
           <span class="badge badge-before"><i class="ri-history-line"></i> 消融前 (BEFORE)</span>
         </div>
 
+        <!-- After Image (Melted Glacier - Revealed from Bottom Up) -->
         <div class="img-wrapper after-wrapper" id="afterWrapper">
           <img id="afterImg" src="after.jpg" alt="冰川消融後 (After Glacier)" loading="eager">
           <span class="badge badge-after"><i class="ri-alert-line"></i> 消融後 (AFTER)</span>
+        </div>
+
+        <!-- Horizontal Interactive Draggable Divider Handle (Default 50% Center) -->
+        <div class="slider-handle" id="sliderHandle" tabindex="0" aria-label="可拖動冰川比較分割線">
+          <div class="handle-line"></div>
+          <div class="handle-button">
+            <i class="ri-arrow-up-s-line"></i>
+            <i class="ri-arrow-down-s-line"></i>
+          </div>
+          <div class="handle-line"></div>
         </div>
       </div>
     </div>
@@ -51,25 +63,16 @@
         <i class="ri-search-eye-line"></i> <span id="markerText">重點觀察區</span>
       </div>
     </div>
-
-    <!-- Horizontal Interactive Draggable Divider Handle (OUTSIDE Zoom Canvas, Scale 1.0, Left-Anchored Handle Button) -->
-    <div class="slider-handle" id="sliderHandle" tabindex="0" aria-label="可拖動冰川比較分割線">
-      <div class="handle-line"></div>
-      <div class="handle-button" id="handleButton" title="上下拖動比較圖片">
-        <i class="ri-arrow-up-s-line"></i>
-        <i class="ri-arrow-down-s-line"></i>
-      </div>
-      <div class="handle-line"></div>
-    </div>
   </div>
 
   <!-- Foreground Story Overlay (Right Aligned, 60% Left Area Exposed) -->
   <div class="story-overlay" id="storyOverlay">
+    <!-- Hero Section -->
     <header class="hero-section">
       <div class="hero-card">
         <span class="hero-tag"><i class="ri-global-line"></i> 互動焦點與滾動敘事</span>
         <h1>消失的白色巨獸</h1>
-        <p class="hero-desc">向下滾動可隨文章聚焦觀察冰川細節。左側分割按鈕可自由上下拖動比較前後變化。</p>
+        <p class="hero-desc">向下滾動可隨著文章聚焦觀察冰川細節。中央分割 Bar 可自由上下拖動比較前後變化。</p>
         <div class="scroll-down-hint">
           <span>向下滾動開始探索</span>
           <i class="ri-arrow-down-double-line animated-arrow"></i>
@@ -77,15 +80,19 @@
       </div>
     </header>
 
+    <!-- Right Aligned Narrative Chapters -->
     <main class="narrative-stream">
+      
+      <!-- Chapter 01 -->
       <article class="narrative-card active" data-step="1">
         <div class="step-badge">Chapter 01</div>
         <h2>序章：千年寂靜的冰封巨獸</h2>
         <p class="chapter-content">
-          在地球的南北極圈與高海拔高山之上，沉睡著覆蓋萬年的古老冰川。這些巨大的冰雪體系是由數千年乃至數萬年累積的降雪，在自身的巨大重力壓縮下逐步結晶、密實而形成的藍色巨大冰體。它們不僅是地球上最壯麗的自然奇觀之一，庫更是保存了地球歷史氣候變遷密碼的「天然冰芯檔案庫」。在工業革命之前的數千年間，極地的降雪補充量與夏季的自然融化量一直保持著微妙而完美的動態平衡。冰川如同巨大的白雪屏障，將高達 80% 至 90% 的太陽輻射反射回太空，有效地維持著全冰河期與間冰期以來地球氣候系統的穩定與涼爽。然而，這份維持了千百年的寂靜平衡，卻在過去一個世紀內面臨著前所未有的劇烈考驗。
+          在地球的南北極圈與高海拔高山之上，沉睡著覆蓋萬年的古老冰川。這些巨大的冰雪體系是由數千年乃至數萬年累積的降雪，在自身的巨大重力壓縮下逐步結晶、密實而形成的藍色巨大冰體。它們不僅是地球上最壯麗的自然奇觀之一，更是保存了地球歷史氣候變遷密碼的「天然冰芯檔案庫」。在工業革命之前的數千年間，極地的降雪補充量與夏季的自然融化量一直保持著微妙而完美的動態平衡。冰川如同巨大的白雪屏障，將高達 80% 至 90% 的太陽輻射反射回太空，有效地維持著全冰河期與間冰期以來地球氣候系統的穩定與涼爽。然而，這份維持了千百年的寂靜平衡，卻在過去一個世紀內面臨著前所未有的劇烈考驗。
         </p>
       </article>
 
+      <!-- Chapter 02 -->
       <article class="narrative-card" data-step="2">
         <div class="step-badge">Chapter 02</div>
         <h2>第一章：工業曙光與溫室氣體的悄然升起</h2>
@@ -94,6 +101,7 @@
         </p>
       </article>
 
+      <!-- Chapter 03 (Zoom Focus Point 1) -->
       <article class="narrative-card" data-step="3">
         <div class="step-badge">Chapter 03</div>
         <h2>第二章：阿爾卑斯山的雪線退縮</h2>
@@ -102,14 +110,16 @@
         </p>
       </article>
 
+      <!-- Chapter 04 (Zoom Focus Point 2) -->
       <article class="narrative-card" data-step="4">
         <div class="step-badge">Chapter 04</div>
         <h2>第三章：格陵蘭大冰原的崩解悲歌</h2>
         <p class="chapter-content">
-          深入北極圈的格陵蘭島，擁有全球僅次於南極的第二大冰原。若格陵蘭大冰原全部融化，足以使全球海平面上升高達 7 公尺。近二十年來的衛星觀測數據顯示，格陵蘭冰原的融化速度比 1990 年代加快了將近七倍。夏天的極地高溫使得冰原表面形成成千上萬個湛藍色的「冰前湖」與深邃的「冰井」。融化的水流順著冰井直通數千公尺深的地底，充當了冰川底部與岩床之間的滑潤劑，進一步加速了巨大冰體向海洋滑動與崩解的速度。巨大的冰山從冰川前緣轟然斷裂崩落入海，發出如同雷鳴般的隆隆巨響，宣告著這片北極古老冰原正步入崩解的惡性循環之中。
+          深入北極圈的格陵蘭島，擁有全球僅次於南極的第二大冰原。若格陵蘭大冰原全部融化，足以使全球海平面上升高達 7 公尺。近二十年來的衛星觀測數據顯示，格陵蘭冰原的融化速度比 1990 年代加快了將近七倍。夏天的極地高溫使得冰原表面形成成千上萬個湛藍色的「冰前湖」與深邃的「冰井」（Moulins）。融化的水流順著冰井直通數千公尺深的地底，充當了冰川底部與岩床之間的滑潤劑，進一步加速了巨大冰體向海洋滑動與崩解的速度。巨大的冰山從冰川前緣轟然斷裂崩落入海，發出如同雷鳴般的隆隆巨響，宣告著這片北極古老冰原正步入崩解的惡性循環之中。
         </p>
       </article>
 
+      <!-- Chapter 05 (Zoom Focus Point 3) -->
       <article class="narrative-card" data-step="5">
         <div class="step-badge">Chapter 05</div>
         <h2>第四章：南極「末日冰川」斯韋特斯的危機</h2>
@@ -118,6 +128,7 @@
         </p>
       </article>
 
+      <!-- Chapter 06 -->
       <article class="narrative-card" data-step="6">
         <div class="step-badge">Chapter 06</div>
         <h2>第五章：極地永凍層融化與甲烷釋放</h2>
@@ -126,6 +137,7 @@
         </p>
       </article>
 
+      <!-- Chapter 07 (Zoom Focus Point 4) -->
       <article class="narrative-card" data-step="7">
         <div class="step-badge">Chapter 07</div>
         <h2>第六章：亞洲水塔的乾涸危機</h2>
@@ -134,6 +146,7 @@
         </p>
       </article>
 
+      <!-- Chapter 08 -->
       <article class="narrative-card" data-step="8">
         <div class="step-badge">Chapter 08</div>
         <h2>第七章：海洋升溫與全球海岸線的浩劫</h2>
@@ -142,6 +155,7 @@
         </p>
       </article>
 
+      <!-- Chapter 09 (Zoom Focus Point 5) -->
       <article class="narrative-card" data-step="9">
         <div class="step-badge">Chapter 09</div>
         <h2>第八章：生態系的連鎖反應與生物多樣性喪失</h2>
@@ -150,6 +164,7 @@
         </p>
       </article>
 
+      <!-- Chapter 10 -->
       <article class="narrative-card" data-step="10">
         <div class="step-badge">Chapter 10</div>
         <h2>終章：人類的抉擇與拯救冰川的最後窗口</h2>
@@ -157,10 +172,12 @@
           站在氣候變遷的十字路口，冰川的消融是地球向人類發出的最嚴正警告。科學界明確指出，將全球升溫控制在 1.5°C 之內，是減緩冰川全面崩解與保護全球氣候系統穩定的關鍵防線。這需要全球各國展現前所未有的決心，加速推動能源轉型、淘汰化石燃料、擴大再生能源比例，並落實森林保護與碳捕集技術。雖然部分小冰川的消失已難以避免，但我們每一分的努力、每一次碳排放的減少，都能為格陵蘭與南極的大冰原爭取珍貴的時間。拯救冰川，本質上就是拯救我們人類自身在這顆藍色星球上的永續未來。
         </p>
       </article>
+
     </main>
 
+    <!-- Footer -->
     <footer class="app-footer">
-      <p>© 氣候變遷視覺化專題 · 全螢幕背景焦點探索 Scrollytelling</p>
+      <p>© 氣候變遷視覺化專題 · 全螢幕背景焦點探索 Scrollytelling 示範</p>
     </footer>
   </div>
 
