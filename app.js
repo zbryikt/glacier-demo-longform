@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const heroContainer = document.getElementById('heroContainer');
   const narrativeStream = document.getElementById('narrativeStream');
 
+  // Configure marked parser if available
+  if (typeof marked !== 'undefined') {
+    marked.setOptions({
+      gfm: true,
+      breaks: true
+    });
+  }
+
   // --- State Variables ---
   let barScreenPercent = 50; // Visual screen position of bar (0% - 100%)
   let currentScale = 1.0;
@@ -33,9 +41,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // --- 2. Dynamic Content Rendering ---
+  // --- 2. Dynamic Content Rendering with Markdown Support ---
   function renderContent(data) {
-    // Render Hero Card with proper hero-section right-aligned wrapper
+    // Render Hero Card
     if (data.meta) {
       heroContainer.innerHTML = `
         <section class="hero-section">
@@ -65,14 +73,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           targetBar: 50
         };
 
-        // Create Chapter Card Element matching design system CSS
+        // Render Markdown content to HTML
+        const htmlContent = (typeof marked !== 'undefined' && chap.content) 
+          ? marked.parse(chap.content) 
+          : `<p>${escapeHtml(chap.content)}</p>`;
+
+        // Create Chapter Card Element
         const card = document.createElement('article');
         card.className = `narrative-card ${chap.id === 1 ? 'active' : ''}`;
         card.dataset.step = chap.id;
         card.innerHTML = `
           <span class="step-badge">${escapeHtml(chap.badge)}</span>
           <h2>${escapeHtml(chap.title)}</h2>
-          <p class="chapter-content">${escapeHtml(chap.content)}</p>
+          <div class="chapter-content markdown-body">${htmlContent}</div>
         `;
         narrativeStream.appendChild(card);
       });
