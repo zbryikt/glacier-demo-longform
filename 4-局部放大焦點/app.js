@@ -35,14 +35,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- 2. Dynamic Content Rendering ---
   function renderContent(data) {
-    // Render Hero Card
+    // Render Hero Card with proper hero-section right-aligned wrapper
     if (data.meta) {
       heroContainer.innerHTML = `
-        <header class="hero-card">
-          <span class="tag">${escapeHtml(data.meta.tag)}</span>
-          <h1 class="title">${escapeHtml(data.meta.title)}</h1>
-          <p class="subtitle">${escapeHtml(data.meta.subtitle)}</p>
-        </header>
+        <section class="hero-section">
+          <header class="hero-card">
+            <span class="hero-tag">${escapeHtml(data.meta.tag)}</span>
+            <h1>${escapeHtml(data.meta.title)}</h1>
+            <p class="hero-desc">${escapeHtml(data.meta.subtitle)}</p>
+            <div class="scroll-down-hint">
+              <span>向下滾動開始探索</span>
+              <span class="animated-arrow">↓</span>
+            </div>
+          </header>
+        </section>
       `;
     }
 
@@ -59,14 +65,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           targetBar: 50
         };
 
-        // Create Chapter Card Element
+        // Create Chapter Card Element matching design system CSS
         const card = document.createElement('article');
         card.className = `narrative-card ${chap.id === 1 ? 'active' : ''}`;
         card.dataset.step = chap.id;
         card.innerHTML = `
-          <span class="chapter-badge">${escapeHtml(chap.badge)}</span>
+          <span class="step-badge">${escapeHtml(chap.badge)}</span>
           <h2>${escapeHtml(chap.title)}</h2>
-          <p>${escapeHtml(chap.content)}</p>
+          <p class="chapter-content">${escapeHtml(chap.content)}</p>
         `;
         narrativeStream.appendChild(card);
       });
