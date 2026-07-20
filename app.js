@@ -1,12 +1,13 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // DOM Elements
   const afterWrapper = document.getElementById('afterWrapper');
   const sliderHandle = document.getElementById('sliderHandle');
   const progressBarFill = document.getElementById('progressBarFill');
-  const narrativeCards = document.querySelectorAll('.narrative-card');
   const zoomCanvas = document.getElementById('zoomCanvas');
   const focusMarker = document.getElementById('focusMarker');
   const markerText = document.getElementById('markerText');
+  const heroContainer = document.getElementById('heroContainer');
+  const narrativeStream = document.getElementById('narrativeStream');
 
   // --- State Variables ---
   let barScreenPercent = 50; // Visual screen position of bar (0% - 100%)
@@ -18,24 +19,74 @@ document.addEventListener('DOMContentLoaded', () => {
   let dragStartY = 0;
   let dragStartTime = 0;
   let animId = null;
+  let focalPoints = {};
 
-  // --- Focal Points & Bar Sweep Targets for Chapters ---
-  const focalPoints = {
-    1: { active: false, scale: 1.0, originX: 0.5, originY: 0.5, targetBar: 50 },
-    2: { active: false, scale: 1.0, originX: 0.5, originY: 0.5, targetBar: 50 },
-    3: { active: true, scale: 1.6, originX: 0.35, originY: 0.25, x: 35, y: 25, label: '🏔️ 高山雪線急劇後退 3.2 km', targetBar: 85 },
-    4: { active: true, scale: 1.8, originX: 0.25, originY: 0.45, x: 25, y: 45, label: '💧 冰井融水深層滲漏點', targetBar: 15 },
-    5: { active: true, scale: 1.7, originX: 0.45, originY: 0.75, x: 45, y: 75, label: '⚠️ 末日冰川接觸線掏空崩塌帶', targetBar: 85 },
-    6: { active: true, scale: 1.5, originX: 0.2, originY: 0.6, x: 20, y: 60, label: '🔥 永凍土解凍與甲烷釋放點', targetBar: 20 },
-    7: { active: true, scale: 1.75, originX: 0.4, originY: 0.35, x: 40, y: 35, label: '🌊 喜馬拉雅冰湖潰決高風險區', targetBar: 80 },
-    8: { active: true, scale: 1.5, originX: 0.5, originY: 0.8, x: 50, y: 80, label: '🌐 海平面上升侵蝕沿海邊界', targetBar: 15 },
-    9: { active: true, scale: 1.6, originX: 0.15, originY: 0.7, x: 15, y: 70, label: '🐾 北極海冰斷裂與棲地破碎點', targetBar: 85 },
-    10: { active: false, scale: 1.0, originX: 0.5, originY: 0.5, targetBar: 50 }
-  };
+  // --- 1. Load Data Decoupled from JSON ---
+  try {
+    const res = await fetch('chapters.json');
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    renderContent(data);
+  } catch (err) {
+    console.error('Failed to load chapters.json:', err);
+    narrativeStream.innerHTML = `<div class="error-msg">載入資料失敗，請重新整理頁面。</div>`;
+    return;
+  }
+
+  // --- 2. Dynamic Content Rendering ---
+  function renderContent(data) {
+    // Render Hero Card
+    if (data.meta) {
+      heroContainer.innerHTML = `
+        <header class="hero-card">
+          <span class="tag">${escapeHtml(data.meta.tag)}</span>
+          <h1 class="title">${escapeHtml(data.meta.title)}</h1>
+          <p class="subtitle">${escapeHtml(data.meta.subtitle)}</p>
+        </header>
+      `;
+    }
+
+    // Render Chapters & Build Focal Points Map
+    if (Array.isArray(data.chapters)) {
+      narrativeStream.innerHTML = '';
+      data.chapters.forEach((chap) => {
+        // Build Focal Point Map
+        focalPoints[chap.id] = chap.focalPoint || {
+          active: false,
+          scale: 1.0,
+          originX: 0.5,
+          originY: 0.5,
+          targetBar: 50
+        };
+
+        // Create Chapter Card Element
+        const card = document.createElement('article');
+        card.className = `narrative-card ${chap.id === 1 ? 'active' : ''}`;
+        card.dataset.step = chap.id;
+        card.innerHTML = `
+          <span class="chapter-badge">${escapeHtml(chap.badge)}</span>
+          <h2>${escapeHtml(chap.title)}</h2>
+          <p>${escapeHtml(chap.content)}</p>
+        `;
+        narrativeStream.appendChild(card);
+      });
+
+      // Bind Intersection Observer to dynamically generated cards
+      bindObserver();
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, (m) => {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+    });
+  }
 
   /**
-   * Recalculates internal canvas clip percentage so visual boundary
-   * aligns 100% pixel-perfectly with sliderHandle.
+   * Exact screen-to-canvas clip conversion equation:
+   * CanvasPos = OriginY + (BarScreenPos - OriginY) / Scale
+   * Guarantees 100% pixel-perfect alignment between image clip boundary and bar line.
    */
   function applyClipPathAndBar() {
     const barFraction = barScreenPercent / 100;
@@ -50,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize bar at center 50%
   applyClipPathAndBar();
 
-  // --- Smooth Bar Animation Helper (Used for both Waypoint Auto Sweep & Click Slide) ---
+  // --- Smooth Bar Animation Helper (Used for Waypoint Auto Sweep & Click Slide) ---
   function animateBarTo(targetPercent, duration = 1000) {
     if (animId) cancelAnimationFrame(animId);
 
@@ -182,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Trigger Focal Point Zoom & Automatic Bar Sweep ---
   function triggerFocalPoint(stepNumber) {
-    const config = focalPoints[stepNumber] || focalPoints[1];
+    const config = focalPoints[stepNumber] || { scale: 1.0, originX: 0.5, originY: 0.5 };
 
     currentScale = config.scale;
     currentOriginX = config.originX;
@@ -200,33 +251,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if (config.active) {
       focusMarker.style.left = `${config.x}%`;
       focusMarker.style.top = `${config.y}%`;
-      markerText.textContent = config.label;
+      markerText.textContent = config.label || '焦點區域';
       focusMarker.classList.add('active');
     } else {
       focusMarker.classList.remove('active');
     }
   }
 
-  // IntersectionObserver to detect active chapter and trigger zoom & sweep
-  const observerOptions = {
-    root: null,
-    rootMargin: '-35% 0px -40% 0px',
-    threshold: 0.15
-  };
+  // Bind IntersectionObserver to rendered cards
+  function bindObserver() {
+    const cards = document.querySelectorAll('.narrative-card');
+    const observerOptions = {
+      root: null,
+      rootMargin: '-35% 0px -40% 0px',
+      threshold: 0.15
+    };
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        narrativeCards.forEach((card) => card.classList.remove('active'));
-        entry.target.classList.add('active');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          cards.forEach((card) => card.classList.remove('active'));
+          entry.target.classList.add('active');
 
-        const step = parseInt(entry.target.dataset.step, 10);
-        triggerFocalPoint(step);
-      }
-    });
-  }, observerOptions);
+          const step = parseInt(entry.target.dataset.step, 10);
+          triggerFocalPoint(step);
+        }
+      });
+    }, observerOptions);
 
-  narrativeCards.forEach((card) => observer.observe(card));
+    cards.forEach((card) => observer.observe(card));
+  }
 
   // Initial calculation
   onScroll();
