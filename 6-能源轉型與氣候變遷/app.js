@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   let modelData = null;
   let currentValues = {};
   let lockedState = {};
+  let isDragging = false;
+  let activeDragId = null;
 
   // --- Load Model Data ---
   try {
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function initApp() {
     renderPresets();
     applyPreset('bau');
-    renderSliders();
+    renderCompactEnergyRows();
     updateSimulation();
   }
 
@@ -85,68 +87,119 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSimulation();
   }
 
-  // --- Render Sliders List with Max Capacity Badges ---
-  function renderSliders() {
+  // --- Render Compact Energy Rows Layout: name [bar] percent lock ---
+  function renderCompactEnergyRows() {
     slidersList.innerHTML = '';
     modelData.sources.forEach(s => {
-      const item = document.createElement('div');
-      item.className = 'slider-item';
-      item.id = `item_${s.id}`;
-      item.dataset.id = s.id;
-      item.innerHTML = `
-        <div class="slider-header">
-          <span class="slider-title" style="color:${s.color}">
-            <i class="${s.icon}"></i> ${s.name}
-          </span>
-          <div class="slider-val-box">
-            <span class="max-cap-badge" id="cap_${s.id}">上限 ${s.maxCap}%</span>
-            <span class="slider-pct" id="pct_${s.id}">${currentValues[s.id]}%</span>
-            <button class="lock-btn" id="lock_${s.id}" title="鎖定此能源比例">
-              <i class="ri-lock-unlock-line"></i>
-            </button>
-          </div>
+      const val = currentValues[s.id] || 0;
+      const row = document.createElement('div');
+      row.className = 'compact-energy-row has-tooltip';
+      row.id = `row_${s.id}`;
+      row.dataset.id = s.id;
+      row.setAttribute('data-tooltip', `${s.desc} (物理上限 ${s.maxCap}%)`);
+
+      row.innerHTML = `
+        <div class="energy-name-col" style="color:${s.color}">
+          <i class="${s.icon}"></i> ${s.name.split(' ')[0]}
         </div>
-        <input type="range" class="slider-track" id="track_${s.id}" min="0" max="100" step="1" value="${currentValues[s.id]}">
-        <span class="slider-desc">${s.desc}</span>
+        <div class="color-bar-col" id="bar_track_${s.id}">
+          <div class="color-bar-fill" id="bar_fill_${s.id}" style="width:${val}%; background-color:${s.color};"></div>
+        </div>
+        <div class="energy-pct-col" id="pct_${s.id}">${val.toFixed(0)}%</div>
+        <div class="energy-lock-col">
+          <button class="lock-btn" id="lock_${s.id}" title="鎖定此能源比例">
+            <i class="ri-lock-unlock-line"></i>
+          </button>
+        </div>
       `;
 
-      slidersList.appendChild(item);
+      slidersList.appendChild(row);
 
-      const track = item.querySelector(`#track_${s.id}`);
-      const lockBtn = item.querySelector(`#lock_${s.id}`);
+      // Interactive Click & Drag Bar Events
+      const barTrack = row.querySelector(`#bar_track_${s.id}`);
+      const lockBtn = row.querySelector(`#lock_${s.id}`);
 
-      track.addEventListener('input', (e) => {
-        onSliderInput(s.id, parseFloat(e.target.value));
+      const handleBarPos = (e) => {
+        const rect = barTrack.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const offsetX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+        const pct = Math.round((offsetX / rect.width) * 100);
+        onSliderInput(s.id, pct);
+      };
+
+      barTrack.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        activeDragId = s.id;
+        handleBarPos(e);
       });
 
-      lockBtn.addEventListener('click', () => {
+      barTrack.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        activeDragId = s.id;
+        handleBarPos(e);
+      }, { passive: true });
+
+      lockBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         lockedState[s.id] = !lockedState[s.id];
         lockBtn.classList.toggle('locked', lockedState[s.id]);
         lockBtn.innerHTML = lockedState[s.id] ? '<i class="ri-lock-fill"></i>' : '<i class="ri-lock-unlock-line"></i>';
       });
     });
+
+    // Global Mousemove & Mouseup for smooth bar dragging
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging || !activeDragId) return;
+      const barTrack = document.getElementById(`bar_track_${activeDragId}`);
+      if (barTrack) {
+        const rect = barTrack.getBoundingClientRect();
+        const offsetX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+        const pct = Math.round((offsetX / rect.width) * 100);
+        onSliderInput(activeDragId, pct);
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      activeDragId = null;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging || !activeDragId) return;
+      const barTrack = document.getElementById(`bar_track_${activeDragId}`);
+      if (barTrack) {
+        const rect = barTrack.getBoundingClientRect();
+        const clientX = e.touches[0].clientX;
+        const offsetX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+        const pct = Math.round((offsetX / rect.width) * 100);
+        onSliderInput(activeDragId, pct);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      isDragging = false;
+      activeDragId = null;
+    });
   }
 
   function updateSlidersUI() {
     modelData.sources.forEach(s => {
-      const track = document.getElementById(`track_${s.id}`);
+      const barFill = document.getElementById(`bar_fill_${s.id}`);
       const pct = document.getElementById(`pct_${s.id}`);
-      const capBadge = document.getElementById(`cap_${s.id}`);
-      const item = document.getElementById(`item_${s.id}`);
+      const row = document.getElementById(`row_${s.id}`);
       const lockBtn = document.getElementById(`lock_${s.id}`);
 
       const val = currentValues[s.id] || 0;
-      if (track) track.value = val;
+      if (barFill) barFill.style.width = `${val}%`;
       if (pct) pct.textContent = `${val.toFixed(0)}%`;
 
       const isExceeded = val > s.maxCap;
-      if (item) item.classList.toggle('cap-exceeded', isExceeded);
-      if (capBadge) {
-        if (isExceeded) {
-          capBadge.textContent = `⚠️ 超過上限 (${s.maxCap}%)`;
-        } else {
-          capBadge.textContent = `上限 ${s.maxCap}%`;
-        }
+      if (row) {
+        row.classList.toggle('cap-exceeded', isExceeded);
+        row.setAttribute('data-tooltip', isExceeded 
+          ? `⚠️ 超過物理上限 (${s.maxCap}%)！ ${s.desc}`
+          : `${s.desc} (物理上限 ${s.maxCap}%)`
+        );
       }
 
       if (lockBtn) {
@@ -214,7 +267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSimulation();
   });
 
-  // --- Physics & Economic Cost Simulation Engine (Target Horizon: 2100) ---
+  // --- Physics & Economic Cost Simulation Engine (2100) ---
   function updateSimulation() {
     let totalDemand = 0;
     let weightedIntensity = 0;
@@ -244,41 +297,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       demandStatusText.innerHTML = `<i class="ri-checkbox-circle-fill"></i> 供需平衡：100% 需求完全滿足`;
     } else {
       demandStatusText.className = 'demand-status-text warning';
-      demandStatusText.innerHTML = `<i class="ri-error-warning-fill"></i> 供需不平衡 (目前 ${totalDemand.toFixed(1)}%)，請調整或開啟自動平衡`;
+      demandStatusText.innerHTML = `<i class="ri-error-warning-fill"></i> 供需不平衡 (${totalDemand.toFixed(1)}%)，請調整或開啟自動平衡`;
     }
 
-    // 2100 Climate Math Calculations
     const bauIntensity = 575;
     const intensityRatio = weightedIntensity / bauIntensity;
 
-    // 2100 Earth Mean Temp Rise (delta T)
-    // BAU = +3.6°C to +4.0°C, Net-Zero = +1.4°C
     const deltaTemp = Math.max(1.2, Math.min(5.0, 1.35 + (intensityRatio * 2.35)));
-
-    // 2100 Global Sea Level Rise (delta SL in cm)
-    // BAU = 115 cm, Net-Zero = 32 cm
     const deltaSea = Math.max(22, Math.min(160, 24 + 48 * Math.pow(Math.max(0, deltaTemp - 1.0), 1.35)));
 
-    // Cumulative Gt CO2 Saved (2025 - 2100: 75 years)
     const annualBauCO2 = 45;
     const currentAnnualCO2 = annualBauCO2 * intensityRatio;
     const savedGtCO2 = Math.max(0, (annualBauCO2 - currentAnnualCO2) * 75);
 
-    // 3. Economic Cost as % of Global GDP (Annual % of Global GDP)
-    // BAU CapEx ~ 1.2% GDP/yr, Net-Zero ~ 3.6% GDP/yr
     const annualGdpInvestment = Math.max(1.0, totalGdpShareSum);
 
-    // Relative Electricity Cost Index (LCOE index, BAU Baseline = 100.0)
     const varRenewableShare = (currentValues['solar'] || 0) + (currentValues['wind'] || 0);
     const storagePenalty = varRenewableShare > 45 ? (varRenewableShare - 45) * 0.45 : 0;
     const relativeLcoeIndex = ((totalLcoeSum / 68.5) * 100) + storagePenalty;
 
-    // Climate Damage Cost Avoided (% of Global GDP per year by 2100)
-    // BAU Climate damage loss at +3.6°C ~ 18.0% Global GDP/yr by 2100 (IPCC WGIII / Stern Review)
     const gdpDamageLossPct = Math.max(1.5, Math.pow(deltaTemp / 1.35, 2.5) * 2.2);
     const gdpDamageSavedPct = Math.max(0, 18.0 - gdpDamageLossPct);
 
-    // Update Metrics UI
     metricTemp.textContent = `+${deltaTemp.toFixed(1)}°C`;
     metricSea.textContent = `${deltaSea.toFixed(1)} cm`;
 
@@ -293,7 +333,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     metricDamageSaved.textContent = `${gdpDamageSavedPct.toFixed(1)} % GDP`;
     metricDamageSavedDesc.textContent = `2100 年避開之全球氣候災難經濟損失`;
 
-    // Alert Colors & Descriptions
     if (deltaTemp <= 1.5) {
       metricTempDesc.textContent = "🟢 2100 達成巴黎協定 1.5°C 安全控制線";
     } else if (deltaTemp <= 2.0) {
@@ -308,16 +347,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       metricSeaDesc.textContent = "🔴 2100 沿海大都會與低窪島國淹沒風險";
     }
 
-    // Update Thermometer & Sea Wave Fills (2100 Scale)
-    // Thermometer 1.0°C - 4.5°C mapped to 20% - 95%
     const thermoPct = Math.min(100, Math.max(15, ((deltaTemp - 1.0) / 3.5) * 80 + 15));
     thermoFill.style.height = `${thermoPct}%`;
 
-    // Sea level 20cm - 130cm mapped to 20% - 95%
     const seaPct = Math.min(100, Math.max(15, ((deltaSea - 20) / 110) * 80 + 15));
     seaWaveFill.style.height = `${seaPct}%`;
 
-    // Render Canvas Visualizations
     drawEnergyMixCanvas();
     drawTrajectoryCanvas(intensityRatio);
   }
@@ -404,12 +439,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       trajCtx.fillText(`${y}`, px - 10, height - 8);
     });
 
-    // BAU Line (2025 - 2100)
     trajCtx.beginPath();
     trajCtx.setLineDash([5, 4]);
     for (let yr = 2025; yr <= 2100; yr += 2) {
       const px = 45 + ((yr - 2025) / 75) * (width - 70);
-      const bauCO2 = 42 + ((yr - 2025) / 75) * 8; // 42 -> 50 Gt
+      const bauCO2 = 42 + ((yr - 2025) / 75) * 8;
       const py = height - 25 - (bauCO2 / 60) * (height - 45);
       if (yr === 2025) trajCtx.moveTo(px, py);
       else trajCtx.lineTo(px, py);
@@ -419,7 +453,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     trajCtx.stroke();
     trajCtx.setLineDash([]);
 
-    // Current Mix Curve (2025 - 2100)
     trajCtx.beginPath();
     for (let yr = 2025; yr <= 2100; yr += 2) {
       const px = 45 + ((yr - 2025) / 75) * (width - 70);

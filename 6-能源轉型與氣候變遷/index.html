@@ -32,16 +32,26 @@
     <!-- Left Controls Panel -->
     <aside class="controls-panel">
       <div class="panel-header">
-        <h2><i class="ri-equalizer-line"></i> 能源供給結構配比與潛能上限</h2>
-        <p class="panel-subtitle">拉動滑桿調整配比。受限於地理、儲能與基礎設施上限，系統自動維護 100% 需求平衡。</p>
+        <h2><i class="ri-equalizer-line"></i> 能源供給結構配比</h2>
+        <p class="panel-subtitle">點擊或拖曳色塊調整配比。懸停查看上限與說明。</p>
       </div>
 
-      <!-- Demand Constraint Balance Meter -->
+      <!-- Demand Constraint Balance Meter with Auto Balance Switch merged right -->
       <div class="demand-meter-box">
-        <div class="demand-meter-label">
-          <span>全球能源供需平衡</span>
-          <span class="demand-val" id="totalDemandVal">100.0%</span>
+        <div class="demand-meter-header">
+          <div class="demand-title-group">
+            <span class="demand-title">全球能源供需平衡</span>
+            <span class="demand-val" id="totalDemandVal">100.0%</span>
+          </div>
+          <div class="auto-balance-group" title="開啟時調動某能源會自動補足乾淨能源">
+            <span class="toggle-text">自動平衡</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="autoBalanceToggle" checked>
+              <span class="slider-round"></span>
+            </label>
+          </div>
         </div>
+
         <div class="demand-bar-bg">
           <div class="demand-bar-fill" id="totalDemandFill" style="width: 100%;"></div>
         </div>
@@ -50,18 +60,9 @@
         </div>
       </div>
 
-      <!-- Auto Balance Toggle -->
-      <div class="auto-balance-row">
-        <label class="toggle-switch">
-          <input type="checkbox" id="autoBalanceToggle" checked>
-          <span class="slider-round"></span>
-        </label>
-        <span class="toggle-text">自動平衡模式 (調整時自動補足乾淨能源)</span>
-      </div>
-
-      <!-- Energy Sliders List Container -->
-      <div class="sliders-list" id="slidersList">
-        <!-- Rendered dynamically by app.js -->
+      <!-- Compact Energy Color Bars List Container -->
+      <div class="compact-energy-list" id="slidersList">
+        <!-- Rendered dynamically by app.js: name [bar] percent lock -->
       </div>
     </aside>
 
