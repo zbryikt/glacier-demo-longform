@@ -20,10 +20,6 @@
       <i class="ri-fire-line logo-icon"></i>
       <span class="brand-title">6-能源轉型與 2100 氣候 GDP 模擬器</span>
     </div>
-    <div class="preset-selectors" id="presetContainer">
-      <span class="preset-label"><i class="ri-flashlight-line"></i> 一鍵預設情境：</span>
-      <!-- Dynamic Preset Buttons rendered from JSON -->
-    </div>
   </header>
 
   <!-- Main Grid Layout -->
@@ -62,7 +58,16 @@
         </div>
       </div>
 
-      <!-- Compact Energy Color Bars List Container -->
+      <!-- Shortened Presets Bar between Demand Meter & Compact Energy Rows -->
+      <div class="short-presets-row" id="shortPresetContainer">
+        <span class="short-preset-label">快速情境：</span>
+        <button class="short-preset-btn active" data-id="bau">現況</button>
+        <button class="short-preset-btn" data-id="paris">巴黎協定</button>
+        <button class="short-preset-btn" data-id="nuclear_heavy">All in 核能</button>
+        <button class="short-preset-btn" data-id="renewable_rush">All in 再生</button>
+      </div>
+
+      <!-- Ultra Compact Energy Color Bars List Container (No Border, No Margin) -->
       <div class="compact-energy-list" id="slidersList">
         <!-- Rendered dynamically by app.js: name [info-circle] [bar] percent lock -->
       </div>
@@ -119,7 +124,7 @@
           </div>
         </div>
 
-        <!-- 2100 Sea Level City Submersion Scale Bar (下到上指標性城市淹沒對照) -->
+        <!-- 2100 Sea Level City Submersion Scale Bar -->
         <div class="gauge-card city-submersion-card">
           <div class="gauge-title"><i class="ri-anchor-line"></i> 2100 沿海城市海水淹沒指標尺標</div>
           

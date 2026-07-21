@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // DOM Elements
-  const presetContainer = document.getElementById('presetContainer');
+  const shortPresetContainer = document.getElementById('shortPresetContainer');
   const totalDemandVal = document.getElementById('totalDemandVal');
   const demandStackedBar = document.getElementById('demandStackedBar');
   const demandStatusText = document.getElementById('demandStatusText');
@@ -55,26 +55,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function initApp() {
-    renderPresets();
+    bindShortPresets();
     applyPreset('bau');
     renderCompactEnergyRows();
     updateSimulation();
   }
 
-  // --- Render Preset Buttons ---
-  function renderPresets() {
-    modelData.presets.forEach(p => {
-      const btn = document.createElement('button');
-      btn.className = `preset-btn ${p.id === 'bau' ? 'active' : ''}`;
-      btn.dataset.id = p.id;
-      btn.textContent = p.name;
-      btn.title = p.desc;
+  // --- Bind Shortened Preset Buttons ---
+  function bindShortPresets() {
+    if (!shortPresetContainer) return;
+    const btns = shortPresetContainer.querySelectorAll('.short-preset-btn');
+    btns.forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        applyPreset(p.id);
+        applyPreset(btn.dataset.id);
       });
-      presetContainer.appendChild(btn);
     });
   }
 
@@ -296,7 +292,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateSimulation() {
     let totalDemand = 0;
     let weightedIntensity = 0;
-
     let totalGdpShareSum = 0;
 
     modelData.sources.forEach(s => {
@@ -358,7 +353,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateCitySubmersionScale(deltaSea) {
     if (!cityMarkersList || !cityWaterFill) return;
 
-    // Rising Water Fill Height (20cm to 150cm mapped to 10% to 95%)
     const waterFillPct = Math.min(100, Math.max(10, ((deltaSea - 20) / 130) * 85 + 10));
     cityWaterFill.style.height = `${waterFillPct}%`;
 
