@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     { id: 'amsterdam', name: '🏛️ 阿姆斯特丹', threshold: 60 },
     { id: 'taipei', name: '🏙️ 台北盆地/淡水河口', threshold: 75 },
     { id: 'newyork', name: '🗽 紐約曼哈頓沿岸', threshold: 95 },
-    { id: 'tokyo', name: '<ctrl42> 東京灣/江東區', threshold: 115 },
+    { id: 'tokyo', name: '🌆 東京灣/江東區', threshold: 115 },
     { id: 'shanghai', name: '🌉 上海/長江口', threshold: 135 }
   ];
 
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSimulation();
   }
 
-  // --- Render Compact Energy Rows Layout: name [info-icon] [bar] percent lock ---
+  // --- Render Compact Energy Rows Layout with Red '無法辦到' Badge ---
   function renderCompactEnergyRows() {
     slidersList.innerHTML = '';
     modelData.sources.forEach(s => {
@@ -97,11 +97,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       row.innerHTML = `
         <div class="energy-name-col" style="color:${s.color}">
           <i class="${s.icon}"></i> ${s.name.split(' ')[0]}
-          <i class="ri-information-line info-icon has-tooltip" id="info_${s.id}" data-tooltip="${s.desc} (上限 ${s.maxCap}%)"></i>
+          <i class="ri-information-line info-icon has-tooltip" id="info_${s.id}" data-tooltip="${s.desc} (物理上限 ${s.maxCap}%)"></i>
         </div>
         <div class="color-bar-col" id="bar_track_${s.id}">
           <div class="color-bar-fill" id="bar_fill_${s.id}" style="width:${val}%; background-color:${s.color};"></div>
         </div>
+        <span class="cap-warning-badge" id="warn_${s.id}">無法辦到</span>
         <div class="energy-pct-col" id="pct_${s.id}">${val.toFixed(0)}%</div>
         <div class="energy-lock-col">
           <button class="lock-btn" id="lock_${s.id}" title="鎖定此能源比例">
@@ -193,7 +194,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (row) row.classList.toggle('cap-exceeded', isExceeded);
       if (infoIcon) {
         infoIcon.setAttribute('data-tooltip', isExceeded 
-          ? `⚠️ 超過物理上限 (${s.maxCap}%)！ ${s.desc}`
+          ? `⚠️ 無法辦到 (超過物理上限 ${s.maxCap}%)！ ${s.desc}`
           : `${s.desc} (物理上限 ${s.maxCap}%)`
         );
       }
