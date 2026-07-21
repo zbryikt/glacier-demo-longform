@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>全球能源轉型與 2050 氣候計算器 (Explorable Explanation)</title>
+  <title>全球能源轉型、潛能上限與經濟成本計算器 (Explorable Explanation)</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
   <header class="calc-header">
     <div class="brand">
       <i class="ri-fire-line logo-icon"></i>
-      <span class="brand-title">6-能源轉型與 2050 氣候模擬器</span>
+      <span class="brand-title">6-能源轉型、潛能上限與成本計算器</span>
     </div>
     <div class="preset-selectors" id="presetContainer">
       <span class="preset-label"><i class="ri-flashlight-line"></i> 一鍵預設情境：</span>
@@ -32,8 +32,8 @@
     <!-- Left Controls Panel -->
     <aside class="controls-panel">
       <div class="panel-header">
-        <h2><i class="ri-equalizer-line"></i> 能源供給結構配比</h2>
-        <p class="panel-subtitle">拉動滑桿調整配比。系統強制保持全球 100% 總需求平衡。</p>
+        <h2><i class="ri-equalizer-line"></i> 能源供給結構配比與潛能上限</h2>
+        <p class="panel-subtitle">拉動滑桿調整配比。受限於地理、儲能與基礎設施上限，系統自動維護 100% 需求平衡。</p>
       </div>
 
       <!-- Demand Constraint Balance Meter -->
@@ -68,10 +68,10 @@
     <!-- Right Interactive Dashboards & Real-time Canvas Charts -->
     <section class="viz-dashboard">
 
-      <!-- Top Key Metrics Cards -->
+      <!-- Top Key Climate & Economic Metrics Cards (6 Cards) -->
       <div class="metrics-grid">
         <div class="metric-card alert-temp">
-          <div class="m-title"><i class="ri-temp-hot-line"></i> 2050 地球平均升溫 (&Delta;T)</div>
+          <div class="m-title"><i class="ri-temp-hot-line"></i> 2050 地球升溫 (&Delta;T)</div>
           <div class="m-val" id="metricTemp">+3.2°C</div>
           <div class="m-desc" id="metricTempDesc">相較於工業化前水平</div>
         </div>
@@ -83,15 +83,27 @@
         </div>
 
         <div class="metric-card">
+          <div class="m-title"><i class="ri-money-dollar-circle-line"></i> 2025–2050 轉型總投資</div>
+          <div class="m-val" id="metricCapex">$28 兆</div>
+          <div class="m-desc" id="metricCapexDesc">綠能、電網與儲能基礎設施</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="m-title"><i class="ri-flashlight-line"></i> 相對發電成本指數</div>
+          <div class="m-val" id="metricLcoe">100.0</div>
+          <div class="m-desc" id="metricLcoeDesc">基準 100.0 (BAU現狀)</div>
+        </div>
+
+        <div class="metric-card">
           <div class="m-title"><i class="ri-leaf-line"></i> 2025–2050 累積減碳量</div>
           <div class="m-val" id="metricSaved">0 Gt CO₂</div>
           <div class="m-desc" id="metricSavedDesc">相較於無介入現狀 (BAU)</div>
         </div>
 
         <div class="metric-card">
-          <span class="m-title"><i class="ri-pulse-line"></i> 零碳/低碳能源占比</span>
-          <div class="m-val" id="metricCleanShare">11.0 %</div>
-          <div class="m-desc" id="metricCleanShareDesc">核能 + 風光水地熱總和</div>
+          <div class="m-title"><i class="ri-shield-check-line"></i> 節省氣候災害經濟損失</div>
+          <div class="m-val" id="metricDamageSaved">$0 兆</div>
+          <div class="m-desc" id="metricDamageSavedDesc">免於淹沒與風暴經濟衝擊</div>
         </div>
       </div>
 
@@ -108,7 +120,7 @@
         <div class="box-header">
           <h3><i class="ri-line-chart-line"></i> 2025–2050 全球碳排放軌跡 (Gt CO₂ / 年)</h3>
         </div>
-        <canvas id="trajectoryCanvas" width="760" height="180"></canvas>
+        <canvas id="trajectoryCanvas" width="760" height="170"></canvas>
       </div>
 
       <!-- Thermometer & Sea Level Meter Visualizer -->

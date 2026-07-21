@@ -12,8 +12,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const metricTempDesc = document.getElementById('metricTempDesc');
   const metricSea = document.getElementById('metricSea');
   const metricSeaDesc = document.getElementById('metricSeaDesc');
+  const metricCapex = document.getElementById('metricCapex');
+  const metricCapexDesc = document.getElementById('metricCapexDesc');
+  const metricLcoe = document.getElementById('metricLcoe');
+  const metricLcoeDesc = document.getElementById('metricLcoeDesc');
   const metricSaved = document.getElementById('metricSaved');
-  const metricCleanShare = document.getElementById('metricCleanShare');
+  const metricSavedDesc = document.getElementById('metricSavedDesc');
+  const metricDamageSaved = document.getElementById('metricDamageSaved');
+  const metricDamageSavedDesc = document.getElementById('metricDamageSavedDesc');
 
   // Gauge Fills
   const thermoFill = document.getElementById('thermoFill');
@@ -86,12 +92,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSimulation();
   }
 
-  // --- Render Sliders List ---
+  // --- Render Sliders List with Max Capacity Badges ---
   function renderSliders() {
     slidersList.innerHTML = '';
     modelData.sources.forEach(s => {
       const item = document.createElement('div');
       item.className = 'slider-item';
+      item.id = `item_${s.id}`;
       item.dataset.id = s.id;
       item.innerHTML = `
         <div class="slider-header">
@@ -99,6 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <i class="${s.icon}"></i> ${s.name}
           </span>
           <div class="slider-val-box">
+            <span class="max-cap-badge" id="cap_${s.id}">上限 ${s.maxCap}%</span>
             <span class="slider-pct" id="pct_${s.id}">${currentValues[s.id]}%</span>
             <button class="lock-btn" id="lock_${s.id}" title="鎖定此能源比例">
               <i class="ri-lock-unlock-line"></i>
@@ -131,9 +139,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     modelData.sources.forEach(s => {
       const track = document.getElementById(`track_${s.id}`);
       const pct = document.getElementById(`pct_${s.id}`);
+      const capBadge = document.getElementById(`cap_${s.id}`);
+      const item = document.getElementById(`item_${s.id}`);
       const lockBtn = document.getElementById(`lock_${s.id}`);
-      if (track) track.value = currentValues[s.id];
-      if (pct) pct.textContent = `${currentValues[s.id].toFixed(0)}%`;
+
+      const val = currentValues[s.id] || 0;
+      if (track) track.value = val;
+      if (pct) pct.textContent = `${val.toFixed(0)}%`;
+
+      // Check max capacity cap violation
+      const isExceeded = val > s.maxCap;
+      if (item) item.classList.toggle('cap-exceeded', isExceeded);
+      if (capBadge) {
+        if (isExceeded) {
+          capBadge.textContent = `⚠️ 超過上限 (${s.maxCap}%)`;
+        } else {
+          capBadge.textContent = `上限 ${s.maxCap}%`;
+        }
+      }
+
       if (lockBtn) {
         lockBtn.classList.toggle('locked', !!lockedState[s.id]);
         lockBtn.innerHTML = lockedState[s.id] ? '<i class="ri-lock-fill"></i>' : '<i class="ri-lock-unlock-line"></i>';
@@ -141,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // --- Auto-Balancing Slider Math Engine ---
+  // --- Auto-Balancing Slider Math Engine with Max Capacity Caps ---
   function onSliderInput(changedId, newVal) {
     const isAutoBalance = autoBalanceToggle.checked;
 
@@ -155,7 +179,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Auto-Balance Enabled Mode
     currentValues[changedId] = newVal;
 
-    // Identify clean/renewable sources for auto distribution
     const cleanSourceIds = ['solar', 'wind', 'hydro', 'nuclear'];
     
     // Calculate total sum of locked sources and changed source
@@ -177,13 +200,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (currentTargetSum > 0) {
         availableTargets.forEach(id => {
-          currentValues[id] = Math.round((currentValues[id] / currentTargetSum) * remainder * 10) / 10;
+          const sObj = modelData.sources.find(x => x.id === id);
+          let share = Math.round((currentValues[id] / currentTargetSum) * remainder * 10) / 10;
+          currentValues[id] = Math.min(sObj ? sObj.maxCap : 100, share);
         });
       } else {
-        // Equal split if all were 0
         const equalShare = remainder / availableTargets.length;
         availableTargets.forEach(id => {
-          currentValues[id] = Math.round(equalShare * 10) / 10;
+          const sObj = modelData.sources.find(x => x.id === id);
+          currentValues[id] = Math.min(sObj ? sObj.maxCap : 100, Math.round(equalShare * 10) / 10);
         });
       }
     }
@@ -203,12 +228,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSimulation();
   });
 
-  // --- Physics Simulation & Climate Metric Calculation Engine ---
+  // --- Physics & Economic Cost Simulation Engine ---
   function updateSimulation() {
     // 1. Calculate Total Demand & Check Balance
     let totalDemand = 0;
     let weightedIntensity = 0;
     let cleanShare = 0;
+
+    let totalLcoeSum = 0;
+    let totalCapexSum = 0;
 
     modelData.sources.forEach(s => {
       const val = currentValues[s.id] || 0;
@@ -218,6 +246,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (s.type === 'clean') {
         cleanShare += val;
       }
+
+      totalLcoeSum += (val / 100) * s.lcoe;
+      totalCapexSum += (val / 100) * s.capex;
     });
 
     // Update Demand Meter UI
@@ -232,32 +263,48 @@ document.addEventListener('DOMContentLoaded', async () => {
       demandStatusText.innerHTML = `<i class="ri-error-warning-fill"></i> 供需不平衡 (目前 ${totalDemand.toFixed(1)}%)，請調整或開啟自動平衡`;
     }
 
-    // 2. Calculate Climate Outcomes for 2050
-    // Baseline BAU average carbon intensity = 575 g CO2/kWh
+    // 2. Climate Calculations
     const bauIntensity = 575;
     const intensityRatio = weightedIntensity / bauIntensity;
 
-    // 2050 Earth Mean Temp Rise (delta T)
-    // BAU = +3.2°C, Net-Zero = +1.4°C
     const deltaTemp = Math.max(1.2, Math.min(4.5, 1.3 + (intensityRatio * 1.9)));
-
-    // 2050 Global Sea Level Rise (delta SL in cm)
-    // BAU = 65 cm, Net-Zero = 24 cm
     const deltaSea = Math.max(18, Math.min(95, 20 + 22 * Math.pow(Math.max(0, deltaTemp - 1.0), 1.3)));
 
-    // Cumulative Gt CO2 Saved (2025 - 2050)
-    // BAU Annual Emission ~42 Gt CO2/yr, total 25-yr BAU sum ~1050 Gt
     const annualBauCO2 = 42;
     const currentAnnualCO2 = annualBauCO2 * intensityRatio;
     const savedGtCO2 = Math.max(0, (annualBauCO2 - currentAnnualCO2) * 25);
 
+    // 3. Economic Cost & Financial Calculations
+    // 2025-2050 Global Energy Transition Investment (Trillion USD)
+    // BAU CapEx baseline ~ $28 Trillion, Net Zero CapEx ~ $62 Trillion
+    const transitionCapexTrillion = Math.round(28 + (cleanShare / 100) * 38);
+
+    // Relative Electricity Cost Index (LCOE index, BAU Baseline = 100.0)
+    // Add grid storage multiplier if variable renewables (solar+wind > 45%)
+    const varRenewableShare = (currentValues['solar'] || 0) + (currentValues['wind'] || 0);
+    const storagePenalty = varRenewableShare > 45 ? (varRenewableShare - 45) * 0.45 : 0;
+    const relativeLcoeIndex = ((totalLcoeSum / 68.5) * 100) + storagePenalty;
+
+    // Climate Damage Cost Saved (Trillion USD)
+    // BAU Climate damage at +3.2°C ~ $180 Trillion USD by 2050
+    // Net Zero at +1.4°C saves ~ $142 Trillion USD
+    const climateDamageTrillion = Math.round((Math.pow(deltaTemp / 1.4, 2.2) - 1) * 45);
+    const damageSavedTrillion = Math.max(0, Math.round(180 - climateDamageTrillion));
+
     // Update Metrics UI
     metricTemp.textContent = `+${deltaTemp.toFixed(1)}°C`;
     metricSea.textContent = `${deltaSea.toFixed(1)} cm`;
-    metricSaved.textContent = `${Math.round(savedGtCO2)} Gt CO₂`;
-    metricCleanShare.textContent = `${cleanShare.toFixed(0)} %`;
+    metricCapex.textContent = `$${transitionCapexTrillion} 兆 USD`;
+    metricCapexDesc.textContent = `2025-2050 綠能與電網轉型建置總額`;
 
-    // Alert colors
+    metricLcoe.textContent = `${relativeLcoeIndex.toFixed(1)}`;
+    metricLcoeDesc.textContent = `相對發電成本指數 (BAU基準 100.0)`;
+
+    metricSaved.textContent = `${Math.round(savedGtCO2)} Gt CO₂`;
+    metricDamageSaved.textContent = `$${damageSavedTrillion} 兆 USD`;
+    metricDamageSavedDesc.textContent = `避免極端氣候與淹沒損失效益`;
+
+    // Alert Colors & Descriptions
     if (deltaTemp <= 1.5) {
       metricTempDesc.textContent = "🟢 達成巴黎協定 1.5°C 安全控制線";
     } else if (deltaTemp <= 2.0) {
@@ -273,11 +320,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Update Thermometer & Sea Wave Fills
-    // Thermometer 1.0°C - 4.0°C mapped to 20% - 95%
     const thermoPct = Math.min(100, Math.max(15, ((deltaTemp - 1.0) / 3.0) * 80 + 15));
     thermoFill.style.height = `${thermoPct}%`;
 
-    // Sea level 20cm - 80cm mapped to 20% - 95%
     const seaPct = Math.min(100, Math.max(15, ((deltaSea - 20) / 60) * 80 + 15));
     seaWaveFill.style.height = `${seaPct}%`;
 
@@ -293,11 +338,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     mixCtx.clearRect(0, 0, width, height);
 
-    // Background
     mixCtx.fillStyle = '#04060c';
     mixCtx.fillRect(0, 0, width, height);
 
-    // Draw Stacked Horizontal Bar
     let currentX = 20;
     const barY = 25;
     const barHeight = 40;
@@ -312,7 +355,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       mixCtx.fillStyle = s.color;
       mixCtx.fillRect(currentX, barY, segmentWidth, barHeight);
 
-      // Label inside bar if wide enough
       if (segmentWidth > 35) {
         mixCtx.fillStyle = s.type === 'fossil' && s.id !== 'gas' ? '#ffffff' : '#0f172a';
         mixCtx.font = 'bold 11px "JetBrains Mono", monospace';
@@ -322,7 +364,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       currentX += segmentWidth;
     });
 
-    // Legend items below bar
     let legendX = 20;
     const legendY = 92;
 
@@ -348,18 +389,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     trajCtx.clearRect(0, 0, width, height);
 
-    // Background
     trajCtx.fillStyle = '#04060c';
     trajCtx.fillRect(0, 0, width, height);
 
-    // Grid lines
-    trajCtx.strokeStyle = 'rgba(255,255,255,0.06)';
-    trajCtx.lineWidth = 1;
     for (let g = 0; g <= 50; g += 10) {
       const py = height - 25 - (g / 50) * (height - 45);
       trajCtx.beginPath();
       trajCtx.moveTo(45, py);
       trajCtx.lineTo(width - 25, py);
+      trajCtx.strokeStyle = 'rgba(255,255,255,0.06)';
       trajCtx.stroke();
 
       trajCtx.fillStyle = 'rgba(255,255,255,0.3)';
@@ -367,7 +405,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       trajCtx.fillText(`${g} Gt`, 12, py + 3);
     }
 
-    // X-axis years
     const years = [2025, 2030, 2035, 2040, 2045, 2050];
     years.forEach(y => {
       const px = 45 + ((y - 2025) / 25) * (width - 70);
@@ -376,12 +413,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       trajCtx.fillText(`${y}`, px - 10, height - 8);
     });
 
-    // 1. BAU Baseline Trajectory (Dashed Red Line)
+    // BAU Line
     trajCtx.beginPath();
     trajCtx.setLineDash([5, 4]);
     for (let yr = 2025; yr <= 2050; yr++) {
       const px = 45 + ((yr - 2025) / 25) * (width - 70);
-      const bauCO2 = 40 + ((yr - 2025) / 25) * 5; // 40 -> 45 Gt
+      const bauCO2 = 40 + ((yr - 2025) / 25) * 5;
       const py = height - 25 - (bauCO2 / 50) * (height - 45);
       if (yr === 2025) trajCtx.moveTo(px, py);
       else trajCtx.lineTo(px, py);
@@ -391,13 +428,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     trajCtx.stroke();
     trajCtx.setLineDash([]);
 
-    // 2. Current User Energy Mix Trajectory (Solid Blue/Green Line)
+    // Current Mix Curve
     trajCtx.beginPath();
     for (let yr = 2025; yr <= 2050; yr++) {
       const px = 45 + ((yr - 2025) / 25) * (width - 70);
       const bauCO2 = 40 + ((yr - 2025) / 25) * 5;
-      
-      // Trajectory transition curves towards 2050 target
       const transitionFactor = 1 - ((yr - 2025) / 25) * (1 - intensityRatio);
       const currentCO2 = Math.max(0, bauCO2 * transitionFactor);
       
@@ -411,7 +446,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     trajCtx.lineWidth = 3;
     trajCtx.stroke();
 
-    // Chart Legend Labels
     trajCtx.fillStyle = 'rgba(239, 68, 68, 0.8)';
     trajCtx.font = '11px "Outfit", sans-serif';
     trajCtx.fillText('-- 無介入現狀 (BAU)', width - 140, 25);

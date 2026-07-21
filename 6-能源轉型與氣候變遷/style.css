@@ -97,7 +97,7 @@ body {
 /* Main Layout Grid */
 .calc-container {
   display: grid;
-  grid-template-columns: 440px 1fr;
+  grid-template-columns: 450px 1fr;
   gap: 1.5rem;
   padding: 1.5rem;
   flex-grow: 1;
@@ -116,7 +116,7 @@ body {
 }
 
 .panel-header h2 {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -124,9 +124,10 @@ body {
 }
 
 .panel-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   margin-top: 0.2rem;
+  line-height: 1.5;
 }
 
 /* Demand Constraint Meter */
@@ -241,6 +242,12 @@ input:checked + .slider-round:before { transform: translateX(16px); }
   padding: 0.75rem 0.9rem;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.slider-item.cap-exceeded {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.06);
 }
 
 .slider-header {
@@ -255,6 +262,21 @@ input:checked + .slider-round:before { transform: translateX(16px); }
   display: flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+.max-cap-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  border-radius: 4px;
+}
+
+.slider-item.cap-exceeded .max-cap-badge {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--accent-red);
+  font-weight: 700;
 }
 
 .slider-val-box {
@@ -303,7 +325,7 @@ input:checked + .slider-round:before { transform: translateX(16px); }
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
@@ -311,7 +333,7 @@ input:checked + .slider-round:before { transform: translateX(16px); }
   background: var(--bg-card);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
-  padding: 1rem 1.2rem;
+  padding: 1rem 1.1rem;
   border-radius: 14px;
   display: flex;
   flex-direction: column;
@@ -339,7 +361,7 @@ input:checked + .slider-round:before { transform: translateX(16px); }
 
 .m-val {
   font-family: var(--font-mono);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 800;
 }
 
