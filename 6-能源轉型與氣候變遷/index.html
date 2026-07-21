@@ -33,14 +33,14 @@
     <aside class="controls-panel">
       <div class="panel-header">
         <h2><i class="ri-equalizer-line"></i> 能源供給結構配比</h2>
-        <p class="panel-subtitle">點擊或拖曳色塊調整配比。懸停查看上限與說明。</p>
+        <p class="panel-subtitle">點擊或拖曳色塊調整配比。懸停 ⓘ 圖示查看說明與上限。</p>
       </div>
 
-      <!-- Demand Constraint Balance Meter with Auto Balance Switch merged right -->
+      <!-- Demand Constraint Balance Meter with Stacked Energy Mix Bar inside! -->
       <div class="demand-meter-box">
         <div class="demand-meter-header">
           <div class="demand-title-group">
-            <span class="demand-title">全球能源供需平衡</span>
+            <span class="demand-title">全球能源供需與配比結構</span>
             <span class="demand-val" id="totalDemandVal">100.0%</span>
           </div>
           <div class="auto-balance-group" title="開啟時調動某能源會自動補足乾淨能源">
@@ -52,9 +52,11 @@
           </div>
         </div>
 
-        <div class="demand-bar-bg">
-          <div class="demand-bar-fill" id="totalDemandFill" style="width: 100%;"></div>
+        <!-- Integrated Multi-Color Stacked Energy Mix Bar inside Demand Meter! -->
+        <div class="demand-stacked-bar" id="demandStackedBar">
+          <!-- Stacked color segments rendered by app.js -->
         </div>
+
         <div class="demand-status-text" id="demandStatusText">
           <i class="ri-checkbox-circle-fill"></i> 供需平衡：100% 需求完全滿足
         </div>
@@ -62,7 +64,7 @@
 
       <!-- Compact Energy Color Bars List Container -->
       <div class="compact-energy-list" id="slidersList">
-        <!-- Rendered dynamically by app.js: name [bar] percent lock -->
+        <!-- Rendered dynamically by app.js: name [info-circle] [bar] percent lock -->
       </div>
     </aside>
 
@@ -108,20 +110,12 @@
         </div>
       </div>
 
-      <!-- Stacked Energy Mix Bar & Donut Chart -->
-      <div class="viz-box">
-        <div class="box-header">
-          <h3><i class="ri-pie-chart-2-line"></i> 能源配比結構 (Energy Mix)</h3>
-        </div>
-        <canvas id="energyMixCanvas" width="760" height="120"></canvas>
-      </div>
-
       <!-- 2025 - 2100 CO2 Trajectory Chart -->
       <div class="viz-box">
         <div class="box-header">
           <h3><i class="ri-line-chart-line"></i> 2025–2100 全球碳排放軌跡 (Gt CO₂ / 年)</h3>
         </div>
-        <canvas id="trajectoryCanvas" width="760" height="170"></canvas>
+        <canvas id="trajectoryCanvas" width="760" height="220"></canvas>
       </div>
 
       <!-- Thermometer & Sea Level Meter Visualizer -->

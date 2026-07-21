@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // DOM Elements
   const presetContainer = document.getElementById('presetContainer');
   const totalDemandVal = document.getElementById('totalDemandVal');
-  const totalDemandFill = document.getElementById('totalDemandFill');
+  const demandStackedBar = document.getElementById('demandStackedBar');
   const demandStatusText = document.getElementById('demandStatusText');
   const autoBalanceToggle = document.getElementById('autoBalanceToggle');
   const slidersList = document.getElementById('slidersList');
@@ -26,9 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const seaWaveFill = document.getElementById('seaWaveFill');
 
   // Canvas Elements
-  const energyMixCanvas = document.getElementById('energyMixCanvas');
   const trajectoryCanvas = document.getElementById('trajectoryCanvas');
-  const mixCtx = energyMixCanvas.getContext('2d');
   const trajCtx = trajectoryCanvas.getContext('2d');
 
   // Data Model State
@@ -87,20 +85,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSimulation();
   }
 
-  // --- Render Compact Energy Rows Layout: name [bar] percent lock ---
+  // --- Render Compact Energy Rows Layout: name [info-icon] [bar] percent lock ---
   function renderCompactEnergyRows() {
     slidersList.innerHTML = '';
     modelData.sources.forEach(s => {
       const val = currentValues[s.id] || 0;
       const row = document.createElement('div');
-      row.className = 'compact-energy-row has-tooltip';
+      row.className = 'compact-energy-row';
       row.id = `row_${s.id}`;
       row.dataset.id = s.id;
-      row.setAttribute('data-tooltip', `${s.desc} (物理上限 ${s.maxCap}%)`);
 
       row.innerHTML = `
         <div class="energy-name-col" style="color:${s.color}">
           <i class="${s.icon}"></i> ${s.name.split(' ')[0]}
+          <i class="ri-information-line info-icon has-tooltip" id="info_${s.id}" data-tooltip="${s.desc} (上限 ${s.maxCap}%)"></i>
         </div>
         <div class="color-bar-col" id="bar_track_${s.id}">
           <div class="color-bar-fill" id="bar_fill_${s.id}" style="width:${val}%; background-color:${s.color};"></div>
@@ -186,6 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     modelData.sources.forEach(s => {
       const barFill = document.getElementById(`bar_fill_${s.id}`);
       const pct = document.getElementById(`pct_${s.id}`);
+      const infoIcon = document.getElementById(`info_${s.id}`);
       const row = document.getElementById(`row_${s.id}`);
       const lockBtn = document.getElementById(`lock_${s.id}`);
 
@@ -194,9 +193,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (pct) pct.textContent = `${val.toFixed(0)}%`;
 
       const isExceeded = val > s.maxCap;
-      if (row) {
-        row.classList.toggle('cap-exceeded', isExceeded);
-        row.setAttribute('data-tooltip', isExceeded 
+      if (row) row.classList.toggle('cap-exceeded', isExceeded);
+      if (infoIcon) {
+        infoIcon.setAttribute('data-tooltip', isExceeded 
           ? `⚠️ 超過物理上限 (${s.maxCap}%)！ ${s.desc}`
           : `${s.desc} (物理上限 ${s.maxCap}%)`
         );
@@ -206,6 +205,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         lockBtn.classList.toggle('locked', !!lockedState[s.id]);
         lockBtn.innerHTML = lockedState[s.id] ? '<i class="ri-lock-fill"></i>' : '<i class="ri-lock-unlock-line"></i>';
       }
+    });
+
+    updateDemandStackedBar();
+  }
+
+  // --- Render Integrated Multi-Color Stacked Energy Mix Bar inside Demand Meter ---
+  function updateDemandStackedBar() {
+    if (!demandStackedBar || !modelData) return;
+    demandStackedBar.innerHTML = '';
+
+    modelData.sources.forEach(s => {
+      const val = currentValues[s.id] || 0;
+      if (val <= 0) return;
+
+      const seg = document.createElement('div');
+      seg.className = 'demand-segment';
+      seg.style.width = `${val}%`;
+      seg.style.backgroundColor = s.color;
+      seg.title = `${s.name}: ${val.toFixed(0)}%`;
+      demandStackedBar.appendChild(seg);
     });
   }
 
@@ -290,7 +309,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     totalDemandVal.textContent = `${totalDemand.toFixed(1)}%`;
-    totalDemandFill.style.width = `${Math.min(100, totalDemand)}%`;
 
     if (Math.abs(totalDemand - 100) < 0.5) {
       demandStatusText.className = 'demand-status-text';
@@ -353,62 +371,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const seaPct = Math.min(100, Math.max(15, ((deltaSea - 20) / 110) * 80 + 15));
     seaWaveFill.style.height = `${seaPct}%`;
 
-    drawEnergyMixCanvas();
     drawTrajectoryCanvas(intensityRatio);
   }
 
-  // --- Canvas Rendering 1: Stacked Energy Mix Bar ---
-  function drawEnergyMixCanvas() {
-    const width = energyMixCanvas.width;
-    const height = energyMixCanvas.height;
-
-    mixCtx.clearRect(0, 0, width, height);
-
-    mixCtx.fillStyle = '#04060c';
-    mixCtx.fillRect(0, 0, width, height);
-
-    let currentX = 20;
-    const barY = 25;
-    const barHeight = 40;
-    const totalBarWidth = width - 40;
-
-    modelData.sources.forEach(s => {
-      const val = currentValues[s.id] || 0;
-      if (val <= 0) return;
-
-      const segmentWidth = (val / 100) * totalBarWidth;
-
-      mixCtx.fillStyle = s.color;
-      mixCtx.fillRect(currentX, barY, segmentWidth, barHeight);
-
-      if (segmentWidth > 35) {
-        mixCtx.fillStyle = s.type === 'fossil' && s.id !== 'gas' ? '#ffffff' : '#0f172a';
-        mixCtx.font = 'bold 11px "JetBrains Mono", monospace';
-        mixCtx.fillText(`${Math.round(val)}%`, currentX + 6, barY + 24);
-      }
-
-      currentX += segmentWidth;
-    });
-
-    let legendX = 20;
-    const legendY = 92;
-
-    modelData.sources.forEach(s => {
-      const val = currentValues[s.id] || 0;
-      if (val <= 0) return;
-
-      mixCtx.fillStyle = s.color;
-      mixCtx.fillRect(legendX, legendY - 8, 10, 10);
-
-      mixCtx.fillStyle = 'rgba(255,255,255,0.7)';
-      mixCtx.font = '11px "Outfit", sans-serif';
-      mixCtx.fillText(`${s.name.split(' ')[0]}: ${Math.round(val)}%`, legendX + 14, legendY);
-
-      legendX += 105;
-    });
-  }
-
-  // --- Canvas Rendering 2: 2025 - 2100 CO2 Trajectory ---
+  // --- Canvas Rendering: 2025 - 2100 CO2 Trajectory ---
   function drawTrajectoryCanvas(intensityRatio) {
     const width = trajectoryCanvas.width;
     const height = trajectoryCanvas.height;
