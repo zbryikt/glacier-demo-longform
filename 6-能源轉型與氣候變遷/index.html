@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>全球能源轉型、潛能上限與經濟成本計算器 (Explorable Explanation)</title>
+  <title>全球能源轉型、潛能上限與 2100 氣候 GDP 計算器 (Explorable Explanation)</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
   <header class="calc-header">
     <div class="brand">
       <i class="ri-fire-line logo-icon"></i>
-      <span class="brand-title">6-能源轉型、潛能上限與成本計算器</span>
+      <span class="brand-title">6-能源轉型與 2100 氣候 GDP 模擬器</span>
     </div>
     <div class="preset-selectors" id="presetContainer">
       <span class="preset-label"><i class="ri-flashlight-line"></i> 一鍵預設情境：</span>
@@ -71,21 +71,21 @@
       <!-- Top Key Climate & Economic Metrics Cards (6 Cards) -->
       <div class="metrics-grid">
         <div class="metric-card alert-temp">
-          <div class="m-title"><i class="ri-temp-hot-line"></i> 2050 地球升溫 (&Delta;T)</div>
-          <div class="m-val" id="metricTemp">+3.2°C</div>
+          <div class="m-title"><i class="ri-temp-hot-line"></i> 2100 地球升溫 (&Delta;T)</div>
+          <div class="m-val" id="metricTemp">+3.6°C</div>
           <div class="m-desc" id="metricTempDesc">相較於工業化前水平</div>
         </div>
 
         <div class="metric-card alert-sea">
-          <div class="m-title"><i class="ri-water-flash-line"></i> 2050 海平面預計上升</div>
-          <div class="m-val" id="metricSea">65.0 cm</div>
+          <div class="m-title"><i class="ri-water-flash-line"></i> 2100 海平面預計上升</div>
+          <div class="m-val" id="metricSea">115.0 cm</div>
           <div class="m-desc" id="metricSeaDesc">全球平均沿海侵蝕上升</div>
         </div>
 
         <div class="metric-card">
-          <div class="m-title"><i class="ri-money-dollar-circle-line"></i> 2025–2050 轉型總投資</div>
-          <div class="m-val" id="metricCapex">$28 兆</div>
-          <div class="m-desc" id="metricCapexDesc">綠能、電網與儲能基礎設施</div>
+          <div class="m-title"><i class="ri-funds-line"></i> 年均轉型投資 (% Global GDP)</div>
+          <div class="m-val" id="metricCapex">1.2 %</div>
+          <div class="m-desc" id="metricCapexDesc">每年全球 GDP 投入綠能與儲能比率</div>
         </div>
 
         <div class="metric-card">
@@ -95,15 +95,15 @@
         </div>
 
         <div class="metric-card">
-          <div class="m-title"><i class="ri-leaf-line"></i> 2025–2050 累積減碳量</div>
+          <div class="m-title"><i class="ri-leaf-line"></i> 2025–2100 累積減碳量</div>
           <div class="m-val" id="metricSaved">0 Gt CO₂</div>
           <div class="m-desc" id="metricSavedDesc">相較於無介入現狀 (BAU)</div>
         </div>
 
         <div class="metric-card">
-          <div class="m-title"><i class="ri-shield-check-line"></i> 節省氣候災害經濟損失</div>
-          <div class="m-val" id="metricDamageSaved">$0 兆</div>
-          <div class="m-desc" id="metricDamageSavedDesc">免於淹沒與風暴經濟衝擊</div>
+          <div class="m-title"><i class="ri-shield-check-line"></i> 2100 避開氣候災害 GDP 損失</div>
+          <div class="m-val" id="metricDamageSaved">0.0 % GDP</div>
+          <div class="m-desc" id="metricDamageSavedDesc">免於極端風暴與淹沒代價</div>
         </div>
       </div>
 
@@ -115,10 +115,10 @@
         <canvas id="energyMixCanvas" width="760" height="120"></canvas>
       </div>
 
-      <!-- 2025 - 2050 CO2 Trajectory Chart -->
+      <!-- 2025 - 2100 CO2 Trajectory Chart -->
       <div class="viz-box">
         <div class="box-header">
-          <h3><i class="ri-line-chart-line"></i> 2025–2050 全球碳排放軌跡 (Gt CO₂ / 年)</h3>
+          <h3><i class="ri-line-chart-line"></i> 2025–2100 全球碳排放軌跡 (Gt CO₂ / 年)</h3>
         </div>
         <canvas id="trajectoryCanvas" width="760" height="170"></canvas>
       </div>
@@ -126,14 +126,14 @@
       <!-- Thermometer & Sea Level Meter Visualizer -->
       <div class="viz-box gauge-flex-box">
         <div class="gauge-card">
-          <div class="gauge-title"><i class="ri-thermometer-line"></i> 2050 地球升溫溫度計</div>
+          <div class="gauge-title"><i class="ri-thermometer-line"></i> 2100 地球升溫溫度計</div>
           <div class="thermometer-visual">
             <div class="thermo-tube">
-              <div class="thermo-fill" id="thermoFill" style="height: 64%;"></div>
+              <div class="thermo-fill" id="thermoFill" style="height: 70%;"></div>
             </div>
             <div class="thermo-marks">
-              <span>+4.0°C (災難)</span>
-              <span>+3.0°C (現狀)</span>
+              <span>+4.5°C (失控)</span>
+              <span>+3.6°C (BAU 現狀)</span>
               <span>+2.0°C (巴黎上限)</span>
               <span>+1.5°C (淨零安全線)</span>
             </div>
@@ -141,16 +141,16 @@
         </div>
 
         <div class="gauge-card">
-          <div class="gauge-title"><i class="ri-direction-line"></i> 2050 海平面上升深度計</div>
+          <div class="gauge-title"><i class="ri-direction-line"></i> 2100 海平面上升深度計</div>
           <div class="sea-meter-visual">
             <div class="sea-wave-box">
-              <div class="sea-wave-fill" id="seaWaveFill" style="height: 65%;"></div>
+              <div class="sea-wave-fill" id="seaWaveFill" style="height: 75%;"></div>
             </div>
             <div class="sea-marks">
-              <span>80 cm (嚴重淹沒)</span>
-              <span>65 cm (BAU 現狀)</span>
-              <span>38 cm (2°C 路徑)</span>
-              <span>24 cm (淨零 1.5°C)</span>
+              <span>130 cm (災難淹沒)</span>
+              <span>115 cm (BAU 現狀)</span>
+              <span>52 cm (2°C 路徑)</span>
+              <span>32 cm (淨零 1.5°C)</span>
             </div>
           </div>
         </div>
