@@ -1,0 +1,481 @@
+:root {
+  --bg-dark: #070a14;
+  --bg-card: rgba(15, 23, 42, 0.75);
+  --bg-card-hover: rgba(26, 38, 62, 0.9);
+  --accent-blue: #38bdf8;
+  --accent-purple: #c084fc;
+  --accent-green: #34d399;
+  --accent-red: #ef4444;
+  --accent-orange: #f97316;
+  --accent-yellow: #fde047;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(239, 68, 68, 0.08) 0px, transparent 50%);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.calc-header {
+  height: 68px;
+  background: rgba(7, 10, 20, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.logo-icon {
+  color: var(--accent-orange);
+  font-size: 1.4rem;
+}
+
+.preset-selectors {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.preset-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.preset-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--accent-blue);
+}
+
+.preset-btn.active {
+  background: var(--accent-blue);
+  color: #0f172a;
+  border-color: var(--accent-blue);
+}
+
+/* Main Layout Grid */
+.calc-container {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+/* Left Panel */
+.controls-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.panel-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panel-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+/* Demand Constraint Meter */
+.demand-meter-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.demand-meter-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.demand-val {
+  font-family: var(--font-mono);
+  color: var(--accent-green);
+}
+
+.demand-bar-bg {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.demand-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
+  transition: width 0.3s ease;
+}
+
+.demand-status-text {
+  font-size: 0.78rem;
+  color: var(--accent-green);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.demand-status-text.warning {
+  color: var(--accent-red);
+}
+
+/* Auto Balance Switch */
+.auto-balance-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  display: inline-block;
+}
+
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+.slider-round {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255,255,255,0.2);
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.slider-round:before {
+  position: absolute;
+  content: "";
+  height: 16px; width: 16px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider-round { background-color: var(--accent-blue); }
+input:checked + .slider-round:before { transform: translateX(16px); }
+
+.toggle-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+/* Sliders List */
+.sliders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slider-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.slider-val-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slider-pct {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.lock-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.2rem;
+  transition: color 0.2s ease;
+}
+
+.lock-btn.locked {
+  color: var(--accent-yellow);
+}
+
+.slider-track {
+  width: 100%;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.slider-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Right Panel Viz Dashboard */
+.viz-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.metric-card.alert-temp {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.metric-card.alert-sea {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.m-title {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.m-val {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.alert-temp .m-val { color: var(--accent-red); }
+.alert-sea .m-val { color: var(--accent-blue); }
+
+.m-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Viz Box Cards */
+.viz-box {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.box-header h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#energyMixCanvas, #trajectoryCanvas {
+  width: 100%;
+  border-radius: 10px;
+  background: #04060c;
+}
+
+/* Gauge Visualizers */
+.gauge-flex-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.gauge-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.gauge-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Thermometer Visual */
+.thermometer-visual {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  background: #04060c;
+  padding: 1.2rem;
+  border-radius: 12px;
+  height: 180px;
+}
+
+.thermo-tube {
+  width: 28px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.thermo-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, var(--accent-red) 0%, var(--accent-orange) 100%);
+  transition: height 0.5s ease;
+  border-radius: 14px;
+}
+
+.thermo-marks, .sea-marks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Sea Meter Visual */
+.sea-meter-visual {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  background: #04060c;
+  padding: 1.2rem;
+  border-radius: 12px;
+  height: 180px;
+}
+
+.sea-wave-box {
+  width: 44px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.sea-wave-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, var(--accent-blue) 0%, #0284c7 100%);
+  transition: height 0.5s ease;
+}
+
+@media (max-width: 1024px) {
+  .calc-container {
+    grid-template-columns: 1fr;
+  }
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "title": "全球能源轉型與 2050 氣候計算器",
+    "subtitle": "調整 7 大能源配比，強制保持總能源 100% 需求平衡，即時算至 2050 目標年全球碳排、溫升與海平面上升。"
+  },
+  "sources": [
+    {
+      "id": "coal",
+      "name": "煤炭 (Coal)",
+      "intensity": 820,
+      "color": "#ef4444",
+      "icon": "ri-fire-fill",
+      "type": "fossil",
+      "desc": "最高碳排能源 (820g CO2/kWh)"
+    },
+    {
+      "id": "oil",
+      "name": "石油 (Oil)",
+      "intensity": 720,
+      "color": "#f97316",
+      "icon": "ri-drop-fill",
+      "type": "fossil",
+      "desc": "運輸與工業高碳排 (720g CO2/kWh)"
+    },
+    {
+      "id": "gas",
+      "name": "天然氣 (Natural Gas)",
+      "intensity": 490,
+      "color": "#eab308",
+      "icon": "ri-gas-station-fill",
+      "type": "fossil",
+      "desc": "過渡型化石燃料 (490g CO2/kWh)"
+    },
+    {
+      "id": "nuclear",
+      "name": "核能 (Nuclear)",
+      "intensity": 12,
+      "color": "#a855f7",
+      "icon": "ri-radioactive-fill",
+      "type": "clean",
+      "desc": "零直接碳排基載 (12g CO2/kWh)"
+    },
+    {
+      "id": "solar",
+      "name": "太陽能 (Solar)",
+      "intensity": 40,
+      "color": "#fde047",
+      "icon": "ri-sun-fill",
+      "type": "clean",
+      "desc": "綠色光伏生命週期 (40g CO2/kWh)"
+    },
+    {
+      "id": "wind",
+      "name": "風力發電 (Wind)",
+      "intensity": 11,
+      "color": "#38bdf8",
+      "icon": "ri-windy-line",
+      "type": "clean",
+      "desc": "陸上/離岸風能 (11g CO2/kWh)"
+    },
+    {
+      "id": "hydro",
+      "name": "水力與地熱 (Hydro/Geo)",
+      "intensity": 24,
+      "color": "#34d399",
+      "icon": "ri-water-flash-fill",
+      "type": "clean",
+      "desc": "再生基載能源 (24g CO2/kWh)"
+    }
+  ],
+  "presets": [
+    {
+      "id": "bau",
+      "name": "🔴 現狀無介入 (Business as Usual)",
+      "desc": "化石燃料仍占近 90%，全球未擴大減碳政策。",
+      "values": {
+        "coal": 36,
+        "oil": 30,
+        "gas": 23,
+        "nuclear": 4,
+        "solar": 3,
+        "wind": 2,
+        "hydro": 2
+      }
+    },
+    {
+      "id": "paris",
+      "name": "🟠 巴黎協定路徑 (Paris 2°C)",
+      "desc": "溫升控制在 2°C 內，加速煤炭退場與再生能源擴建。",
+      "values": {
+        "coal": 10,
+        "oil": 15,
+        "gas": 20,
+        "nuclear": 15,
+        "solar": 20,
+        "wind": 15,
+        "hydro": 5
+      }
+    },
+    {
+      "id": "netzero",
+      "name": "🟢 2050 淨零排放 (Net-Zero 1.5°C)",
+      "desc": "2050 年徹底消除煤炭，清潔能源占比達到 90% 以上。",
+      "values": {
+        "coal": 0,
+        "oil": 5,
+        "gas": 5,
+        "nuclear": 20,
+        "solar": 35,
+        "wind": 25,
+        "hydro": 10
+      }
+    },
+    {
+      "id": "nuclear_heavy",
+      "name": "⚛️ 核能高比例轉型 (Nuclear Heavy)",
+      "desc": "以低碳核能作為主要基載替代煤炭與天然氣。",
+      "values": {
+        "coal": 5,
+        "oil": 10,
+        "gas": 10,
+        "nuclear": 35,
+        "solar": 20,
+        "wind": 15,
+        "hydro": 5
+      }
+    },
+    {
+      "id": "renewable_rush",
+      "name": "☀️ 100% 再生能源主導 (Renewable Rush)",
+      "desc": "風能、太陽能與水力占據 90% 以上絕對主導地位。",
+      "values": {
+        "coal": 0,
+        "oil": 2,
+        "gas": 3,
+        "nuclear": 5,
+        "solar": 45,
+        "wind": 35,
+        "hydro": 10
+      }
+    }
+  ]
+}

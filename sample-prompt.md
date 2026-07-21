@@ -17,4 +17,12 @@
 現在讓文字區塊靠右, 讓左邊 6成空間露出. 保持目前底圖效果. 
 隨文字區塊的滑動, 隨機找幾個點做局部放大, 然後用紅圈框出一個點, 寫個短文字, 做為焦點. 
 bar 改為可以拖動, 不隨 scroll 移動, 預設置中 (一樣是垂直, 往上/下移動模式)
+ok 4. 的文本跟 html 拆開. 把資料跟html/css/js decouple, 看是要讀檔載入 render 還是怎麼做?
+整個 json 能變成 markdown 嗎 (已轉為 story.md + Frontmatter)
 
+5版: 5-ee 探索式解釋 (Explorable Explanation)
+參考 ee.md, 做 5-ee/index.html 解釋探索 (包含氣溫/ELA、時間延遲、高度正回饋、質量收支矩陣與自由沙盒)
+
+6版: 6-能源轉型與氣候變遷 (Energy Transition & Climate Calculator)
+各種碳排能源 (煤/油/氣/核/風/光/水地), 消長時需要其它能源替代 (自動維護 100% 能源供需平衡)
+即時算至 2050 年全球碳排減量、地球均溫變化 (ΔT) 與海平面預計上升幅度 (ΔSL), 支援 Preset 一鍵切換情境

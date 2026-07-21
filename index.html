@@ -201,52 +201,6 @@
       box-shadow: 0 0 20px var(--accent-glow);
     }
 
-    /* Empty Placeholder Card for Grid Symmetry */
-    .placeholder-card {
-      background: rgba(18, 26, 43, 0.35);
-      border: 2px dashed rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-lg);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 2rem;
-      text-align: center;
-      gap: 1rem;
-      min-height: 420px;
-      transition: all 0.3s ease;
-    }
-
-    .placeholder-card:hover {
-      border-color: rgba(56, 189, 248, 0.3);
-      background: rgba(18, 26, 43, 0.5);
-    }
-
-    .ph-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      color: var(--text-muted);
-    }
-
-    .ph-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .ph-desc {
-      font-size: 0.88rem;
-      color: rgba(148, 163, 184, 0.7);
-      max-width: 280px;
-    }
-
     /* Footer */
     footer {
       text-align: center;
@@ -260,9 +214,6 @@
       .gallery-grid {
         grid-template-columns: 1fr;
       }
-      .placeholder-card {
-        min-height: 240px;
-      }
     }
   </style>
 </head>
@@ -271,8 +222,8 @@
     <!-- Header -->
     <header>
       <span class="header-badge"><i class="ri-stack-line"></i> Version Showcase</span>
-      <h1>圖片比較專案 - 演進歷程藝廊</h1>
-      <p class="subtitle">點擊下方卡片可直接體驗不同階段開發的圖片比較、Scrollytelling 與 Explorable Explanation 視覺互動效果。</p>
+      <h1>圖片比較與氣候模擬 - 演進歷程藝廊</h1>
+      <p class="subtitle">點擊下方卡片可直接體驗不同階段開發的圖片比較、Scrollytelling 與 2050 氣候能源模擬器。</p>
     </header>
 
     <!-- Symmetric Version Gallery Grid (3 Rows x 2 Columns = 6 Slots) -->
@@ -353,20 +304,26 @@
         </div>
       </article>
 
-      <!-- Slot 6: Empty Symmetric Placeholder -->
-      <div class="placeholder-card">
-        <div class="ph-icon">
-          <i class="ri-flask-line"></i>
+      <!-- Slot 6: Version 6 (Energy Transition & Climate Calculator) -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay" style="background:rgba(249,115,22,0.25); color:#fdba74; border-color:#f97316">VERSION 6 (Energy & Climate)</span>
+          <img src="6-能源轉型與氣候變遷/thumbnail.png" alt="6-能源轉型與氣候變遷 截圖預覽" loading="eager">
         </div>
-        <div class="ph-title">VERSION 6 / COMING SOON</div>
-        <div class="ph-desc">更多氣候變遷與環境數據視覺化互動模組開發中...</div>
-      </div>
+        <div class="card-body">
+          <h2 class="card-title" style="color:#f97316"><i class="ri-fire-line"></i> 6-能源轉型與氣候變遷</h2>
+          <p class="card-desc">全球能源配比與 2050 氣候計算器。調整 7 大能源控制軸，自動維護 100% 能源供需平衡。即時算至 2050 年全球累積減碳量、地球平均升溫與海平面上升幅度，內建一鍵情境 Preset。</p>
+          <a class="btn-open" href="6-能源轉型與氣候變遷/index.html" style="background:rgba(249,115,22,0.2); border-color:rgba(249,115,22,0.4); color:#fdba74; font-weight:700">
+            <i class="ri-play-circle-line"></i> 開啟 6-能源轉型與氣候計算器
+          </a>
+        </div>
+      </article>
 
     </main>
 
     <!-- Footer -->
     <footer>
-      <p>© 圖片比較與滾動敘事專案藝廊 (Image Comparison Gallery)</p>
+      <p>© 圖片比較與氣候模擬專案藝廊 (Image Comparison Gallery)</p>
     </footer>
   </div>
 </body>
