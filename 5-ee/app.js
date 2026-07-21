@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const markerText = document.getElementById('markerText');
   const heroContainer = document.getElementById('heroContainer');
   const narrativeStream = document.getElementById('narrativeStream');
+  const storyOverlay = document.getElementById('storyOverlay');
 
   // Configure marked parser if available
   if (typeof marked !== 'undefined') {
@@ -156,6 +157,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Render Waypoints Navigation Box at the bottom of the stream
       renderWaypointsNav(data.chapters);
 
+      // Render Embedded Version 6 Section at the very end of the page
+      renderEmbeddedV6();
+
       // Bind Intersection Observer to dynamically generated cards
       bindObserver();
     }
@@ -196,6 +200,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.classList.add('active');
       });
     });
+  }
+
+  // --- Render Embedded Version 6 Section at the Very End ---
+  function renderEmbeddedV6() {
+    if (document.getElementById('embeddedV6Section')) return;
+
+    const section = document.createElement('section');
+    section.className = 'embedded-v6-section';
+    section.id = 'embeddedV6Section';
+
+    section.innerHTML = `
+      <div class="embedded-v6-header">
+        <div class="embedded-v6-title-group">
+          <span class="v6-tag-badge">VERSION 6</span>
+          <h2><i class="ri-fire-line"></i> 延伸探索：全球能源轉型與 2100 氣候計算器</h2>
+        </div>
+        <p>動態調整 7 大能源配比，即時計算至 2100 年地球平均升溫、海平面上升與沿海城市淹沒風險。</p>
+      </div>
+      <div class="v6-iframe-wrapper">
+        <iframe src="../6-能源轉型與氣候變遷/index.html" class="v6-iframe" title="全球能源轉型與 2100 氣候 GDP 計算器" loading="lazy"></iframe>
+      </div>
+    `;
+
+    storyOverlay.appendChild(section);
   }
 
   function escapeHtml(str) {
