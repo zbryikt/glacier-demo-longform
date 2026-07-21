@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     navBox.innerHTML = `
       <div class="waypoints-nav-header">
-        <i class="ri-compass-3-line"></i> 快速探索焦點章節 (Waypoints Quick Jump)
+        <i class="ri-compass-3-line"></i> 快速切換底圖焦點 (In-Place Pan/Zoom Waypoints)
       </div>
       <div class="waypoints-buttons-grid">
         ${chapters.map(chap => `
@@ -183,20 +183,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     narrativeStream.appendChild(navBox);
 
-    // Bind Click Events on Waypoint Buttons
+    // Bind Click Events on Waypoint Buttons (In-place pan/zoom without scrolling back up!)
     navBox.querySelectorAll('.waypoint-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const step = parseInt(btn.dataset.step, 10);
-        const targetCard = document.querySelector(`.narrative-card[data-step="${step}"]`);
         
-        if (targetCard) {
-          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          triggerFocalPoint(step);
-          
-          // Highlight active button
-          navBox.querySelectorAll('.waypoint-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        }
+        // Directly pan/zoom the background stage without triggering page scroll
+        triggerFocalPoint(step);
+        
+        // Highlight active button
+        navBox.querySelectorAll('.waypoint-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
       });
     });
   }
