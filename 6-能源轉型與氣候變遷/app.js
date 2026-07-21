@@ -7,23 +7,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const autoBalanceToggle = document.getElementById('autoBalanceToggle');
   const slidersList = document.getElementById('slidersList');
 
-  // Metric Elements
+  // Metric Elements (3 Clean Key Cards Only!)
   const metricTemp = document.getElementById('metricTemp');
   const metricTempDesc = document.getElementById('metricTempDesc');
   const metricSea = document.getElementById('metricSea');
   const metricSeaDesc = document.getElementById('metricSeaDesc');
   const metricCapex = document.getElementById('metricCapex');
   const metricCapexDesc = document.getElementById('metricCapexDesc');
-  const metricLcoe = document.getElementById('metricLcoe');
-  const metricLcoeDesc = document.getElementById('metricLcoeDesc');
-  const metricSaved = document.getElementById('metricSaved');
-  const metricSavedDesc = document.getElementById('metricSavedDesc');
-  const metricDamageSaved = document.getElementById('metricDamageSaved');
-  const metricDamageSavedDesc = document.getElementById('metricDamageSavedDesc');
 
-  // Gauge Fills
+  // Gauge & City Submersion Elements
   const thermoFill = document.getElementById('thermoFill');
-  const seaWaveFill = document.getElementById('seaWaveFill');
+  const cityWaterFill = document.getElementById('cityWaterFill');
+  const cityMarkersList = document.getElementById('cityMarkersList');
 
   // Canvas Elements
   const trajectoryCanvas = document.getElementById('trajectoryCanvas');
@@ -35,6 +30,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   let lockedState = {};
   let isDragging = false;
   let activeDragId = null;
+
+  // Iconic Coastal Cities Elevations & Inundation Risk Thresholds (cm of 2100 sea level rise)
+  const iconicCities = [
+    { id: 'maldives', name: '🏝️ 馬爾地夫', threshold: 25 },
+    { id: 'venice', name: '🌊 威尼斯', threshold: 45 },
+    { id: 'amsterdam', name: '🏛️ 阿姆斯特丹', threshold: 60 },
+    { id: 'taipei', name: '🏙️ 台北盆地/淡水河口', threshold: 75 },
+    { id: 'newyork', name: '🗽 紐約曼哈頓沿岸', threshold: 95 },
+    { id: 'tokyo', name: '🌆 東京灣/江東區', threshold: 115 },
+    { id: 'shanghai', name: '🌉 上海/長江口', threshold: 135 }
+  ];
 
   // --- Load Model Data ---
   try {
@@ -290,21 +296,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateSimulation() {
     let totalDemand = 0;
     let weightedIntensity = 0;
-    let cleanShare = 0;
 
-    let totalLcoeSum = 0;
     let totalGdpShareSum = 0;
 
     modelData.sources.forEach(s => {
       const val = currentValues[s.id] || 0;
       totalDemand += val;
       weightedIntensity += (val / 100) * s.intensity;
-
-      if (s.type === 'clean') {
-        cleanShare += val;
-      }
-
-      totalLcoeSum += (val / 100) * s.lcoe;
       totalGdpShareSum += (val / 100) * (s.gdpShare || 0.5);
     });
 
@@ -324,32 +322,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const deltaTemp = Math.max(1.2, Math.min(5.0, 1.35 + (intensityRatio * 2.35)));
     const deltaSea = Math.max(22, Math.min(160, 24 + 48 * Math.pow(Math.max(0, deltaTemp - 1.0), 1.35)));
 
-    const annualBauCO2 = 45;
-    const currentAnnualCO2 = annualBauCO2 * intensityRatio;
-    const savedGtCO2 = Math.max(0, (annualBauCO2 - currentAnnualCO2) * 75);
-
     const annualGdpInvestment = Math.max(1.0, totalGdpShareSum);
 
-    const varRenewableShare = (currentValues['solar'] || 0) + (currentValues['wind'] || 0);
-    const storagePenalty = varRenewableShare > 45 ? (varRenewableShare - 45) * 0.45 : 0;
-    const relativeLcoeIndex = ((totalLcoeSum / 68.5) * 100) + storagePenalty;
-
-    const gdpDamageLossPct = Math.max(1.5, Math.pow(deltaTemp / 1.35, 2.5) * 2.2);
-    const gdpDamageSavedPct = Math.max(0, 18.0 - gdpDamageLossPct);
-
+    // Update 3 Clean Top Key Metric Cards
     metricTemp.textContent = `+${deltaTemp.toFixed(1)}°C`;
     metricSea.textContent = `${deltaSea.toFixed(1)} cm`;
-
     metricCapex.textContent = `${annualGdpInvestment.toFixed(1)} %`;
     metricCapexDesc.textContent = `每年全球 GDP 投入綠能建置與電網`;
-
-    metricLcoe.textContent = `${relativeLcoeIndex.toFixed(1)}`;
-    metricLcoeDesc.textContent = `相對發電成本指數 (BAU基準 100.0)`;
-
-    metricSaved.textContent = `${Math.round(savedGtCO2)} Gt CO₂`;
-
-    metricDamageSaved.textContent = `${gdpDamageSavedPct.toFixed(1)} % GDP`;
-    metricDamageSavedDesc.textContent = `2100 年避開之全球氣候災難經濟損失`;
 
     if (deltaTemp <= 1.5) {
       metricTempDesc.textContent = "🟢 2100 達成巴黎協定 1.5°C 安全控制線";
@@ -365,13 +344,46 @@ document.addEventListener('DOMContentLoaded', async () => {
       metricSeaDesc.textContent = "🔴 2100 沿海大都會與低窪島國淹沒風險";
     }
 
+    // Update Thermometer Fill (2100 Scale)
     const thermoPct = Math.min(100, Math.max(15, ((deltaTemp - 1.0) / 3.5) * 80 + 15));
     thermoFill.style.height = `${thermoPct}%`;
 
-    const seaPct = Math.min(100, Math.max(15, ((deltaSea - 20) / 110) * 80 + 15));
-    seaWaveFill.style.height = `${seaPct}%`;
+    // Update City Submersion Vertical Scale Bar
+    updateCitySubmersionScale(deltaSea);
 
     drawTrajectoryCanvas(intensityRatio);
+  }
+
+  // --- Render City Submersion Vertical Bar Scale ---
+  function updateCitySubmersionScale(deltaSea) {
+    if (!cityMarkersList || !cityWaterFill) return;
+
+    // Rising Water Fill Height (20cm to 150cm mapped to 10% to 95%)
+    const waterFillPct = Math.min(100, Math.max(10, ((deltaSea - 20) / 130) * 85 + 10));
+    cityWaterFill.style.height = `${waterFillPct}%`;
+
+    cityMarkersList.innerHTML = '';
+
+    iconicCities.forEach(city => {
+      const isSubmerged = deltaSea >= city.threshold;
+      const item = document.createElement('div');
+      item.className = `city-marker-item ${isSubmerged ? 'submerged' : ''}`;
+
+      item.innerHTML = `
+        <div class="city-name-group">
+          <span class="city-name">${city.name}</span>
+          <span class="city-thresh">(${city.threshold}cm)</span>
+        </div>
+        <div>
+          ${isSubmerged 
+            ? `<span class="badge-submerged"><i class="ri-alarm-warning-fill"></i> 淹沒警告</span>` 
+            : `<span class="badge-safe"><i class="ri-checkbox-circle-fill"></i> 安全</span>`
+          }
+        </div>
+      `;
+
+      cityMarkersList.appendChild(item);
+    });
   }
 
   // --- Canvas Rendering: 2025 - 2100 CO2 Trajectory ---

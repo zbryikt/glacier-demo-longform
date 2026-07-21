@@ -36,7 +36,7 @@
         <p class="panel-subtitle">點擊或拖曳色塊調整配比。懸停 ⓘ 圖示查看說明與上限。</p>
       </div>
 
-      <!-- Demand Constraint Balance Meter with Stacked Energy Mix Bar inside! -->
+      <!-- Demand Constraint Balance Meter with Stacked Energy Mix Bar inside -->
       <div class="demand-meter-box">
         <div class="demand-meter-header">
           <div class="demand-title-group">
@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <!-- Integrated Multi-Color Stacked Energy Mix Bar inside Demand Meter! -->
+        <!-- Integrated Multi-Color Stacked Energy Mix Bar inside Demand Meter -->
         <div class="demand-stacked-bar" id="demandStackedBar">
           <!-- Stacked color segments rendered by app.js -->
         </div>
@@ -71,10 +71,10 @@
     <!-- Right Interactive Dashboards & Real-time Canvas Charts -->
     <section class="viz-dashboard">
 
-      <!-- Top Key Climate & Economic Metrics Cards (6 Cards) -->
+      <!-- Top Key Climate & Economic Metrics Cards (3 Clean Key Cards Only!) -->
       <div class="metrics-grid">
         <div class="metric-card alert-temp">
-          <div class="m-title"><i class="ri-temp-hot-line"></i> 2100 地球升溫 (&Delta;T)</div>
+          <div class="m-title"><i class="ri-temp-hot-line"></i> 2100 地球平均升溫 (&Delta;T)</div>
           <div class="m-val" id="metricTemp">+3.6°C</div>
           <div class="m-desc" id="metricTempDesc">相較於工業化前水平</div>
         </div>
@@ -90,24 +90,6 @@
           <div class="m-val" id="metricCapex">1.2 %</div>
           <div class="m-desc" id="metricCapexDesc">每年全球 GDP 投入綠能與儲能比率</div>
         </div>
-
-        <div class="metric-card">
-          <div class="m-title"><i class="ri-flashlight-line"></i> 相對發電成本指數</div>
-          <div class="m-val" id="metricLcoe">100.0</div>
-          <div class="m-desc" id="metricLcoeDesc">基準 100.0 (BAU現狀)</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="m-title"><i class="ri-leaf-line"></i> 2025–2100 累積減碳量</div>
-          <div class="m-val" id="metricSaved">0 Gt CO₂</div>
-          <div class="m-desc" id="metricSavedDesc">相較於無介入現狀 (BAU)</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="m-title"><i class="ri-shield-check-line"></i> 2100 避開氣候災害 GDP 損失</div>
-          <div class="m-val" id="metricDamageSaved">0.0 % GDP</div>
-          <div class="m-desc" id="metricDamageSavedDesc">免於極端風暴與淹沒代價</div>
-        </div>
       </div>
 
       <!-- 2025 - 2100 CO2 Trajectory Chart -->
@@ -115,11 +97,13 @@
         <div class="box-header">
           <h3><i class="ri-line-chart-line"></i> 2025–2100 全球碳排放軌跡 (Gt CO₂ / 年)</h3>
         </div>
-        <canvas id="trajectoryCanvas" width="760" height="220"></canvas>
+        <canvas id="trajectoryCanvas" width="760" height="180"></canvas>
       </div>
 
-      <!-- Thermometer & Sea Level Meter Visualizer -->
+      <!-- Thermometer & City Submersion Vertical Bar Scale Visualizer -->
       <div class="viz-box gauge-flex-box">
+
+        <!-- 2100 Thermometer -->
         <div class="gauge-card">
           <div class="gauge-title"><i class="ri-thermometer-line"></i> 2100 地球升溫溫度計</div>
           <div class="thermometer-visual">
@@ -135,20 +119,23 @@
           </div>
         </div>
 
-        <div class="gauge-card">
-          <div class="gauge-title"><i class="ri-direction-line"></i> 2100 海平面上升深度計</div>
-          <div class="sea-meter-visual">
-            <div class="sea-wave-box">
-              <div class="sea-wave-fill" id="seaWaveFill" style="height: 75%;"></div>
+        <!-- 2100 Sea Level City Submersion Scale Bar (下到上指標性城市淹沒對照) -->
+        <div class="gauge-card city-submersion-card">
+          <div class="gauge-title"><i class="ri-anchor-line"></i> 2100 沿海城市海水淹沒指標尺標</div>
+          
+          <div class="city-submersion-wrapper">
+            <!-- Vertical Rising Water Fill Tube Bar -->
+            <div class="city-water-bar-container">
+              <div class="city-water-fill" id="cityWaterFill" style="height: 75%;"></div>
             </div>
-            <div class="sea-marks">
-              <span>130 cm (災難淹沒)</span>
-              <span>115 cm (BAU 現狀)</span>
-              <span>52 cm (2°C 路徑)</span>
-              <span>32 cm (淨零 1.5°C)</span>
+
+            <!-- Cities Elevation Markers (Bottom to Top) -->
+            <div class="city-markers-list" id="cityMarkersList">
+              <!-- Rendered dynamically by app.js from bottom (25cm) to top (135cm) -->
             </div>
           </div>
         </div>
+
       </div>
 
     </section>

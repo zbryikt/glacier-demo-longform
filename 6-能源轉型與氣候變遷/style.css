@@ -129,7 +129,7 @@ body {
   margin-top: 0.2rem;
 }
 
-/* Demand Constraint Meter with Integrated Multi-Color Stacked Energy Mix Bar */
+/* Demand Constraint Meter */
 .demand-meter-box {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--border-color);
@@ -207,7 +207,7 @@ body {
 input:checked + .slider-round { background-color: var(--accent-blue); }
 input:checked + .slider-round:before { transform: translateX(14px); }
 
-/* Multi-Color Stacked Energy Mix Bar inside Demand Meter */
+/* Stacked Energy Mix Bar */
 .demand-stacked-bar {
   width: 100%;
   height: 14px;
@@ -235,7 +235,7 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   color: var(--accent-red);
 }
 
-/* Compact Energy Color Bars List Layout: name [info-icon] [bar] percent lock */
+/* Compact Energy Rows Layout */
 .compact-energy-list {
   display: flex;
   flex-direction: column;
@@ -265,7 +265,6 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   background: rgba(239, 68, 68, 0.08);
 }
 
-/* Name Column with Info-Circle Icon */
 .energy-name-col {
   font-size: 0.82rem;
   font-weight: 700;
@@ -287,7 +286,6 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   color: var(--accent-blue);
 }
 
-/* Info Tooltip trigger ONLY on .info-icon */
 .info-icon.has-tooltip {
   position: relative;
 }
@@ -311,7 +309,6 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   box-shadow: 0 10px 25px rgba(0,0,0,0.6);
 }
 
-/* Interactive Color Bar Track Column */
 .color-bar-col {
   height: 20px;
   background: rgba(0, 0, 0, 0.4);
@@ -328,7 +325,6 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   transition: width 0.15s ease;
 }
 
-/* Percent Column */
 .energy-pct-col {
   font-family: var(--font-mono);
   font-size: 0.85rem;
@@ -336,7 +332,6 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   text-align: right;
 }
 
-/* Lock Button Column */
 .energy-lock-col {
   display: flex;
   justify-content: center;
@@ -363,21 +358,22 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   gap: 1.25rem;
 }
 
+/* 3 Clean Top Key Metric Cards! */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .metric-card {
   background: var(--bg-card);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
-  padding: 1rem 1.1rem;
+  padding: 1.15rem 1.3rem;
   border-radius: 14px;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
 .metric-card.alert-temp {
@@ -391,17 +387,17 @@ input:checked + .slider-round:before { transform: translateX(14px); }
 }
 
 .m-title {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
 }
 
 .m-val {
   font-family: var(--font-mono);
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 800;
 }
 
@@ -409,7 +405,7 @@ input:checked + .slider-round:before { transform: translateX(14px); }
 .alert-sea .m-val { color: var(--accent-blue); }
 
 .m-desc {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
@@ -440,10 +436,10 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   background: #04060c;
 }
 
-/* Gauge Visualizers */
+/* Gauge & City Submersion Scale Visualizers */
 .gauge-flex-box {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 240px 1fr;
   gap: 1.25rem;
 }
 
@@ -466,11 +462,11 @@ input:checked + .slider-round:before { transform: translateX(14px); }
 .thermometer-visual {
   display: flex;
   align-items: flex-end;
-  gap: 1.5rem;
+  gap: 1.2rem;
   background: #04060c;
   padding: 1.2rem;
   border-radius: 12px;
-  height: 180px;
+  height: 220px;
 }
 
 .thermo-tube {
@@ -493,38 +489,39 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   border-radius: 14px;
 }
 
-.thermo-marks, .sea-marks {
+.thermo-marks {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   font-family: var(--font-mono);
 }
 
-/* Sea Meter Visual */
-.sea-meter-visual {
+/* City Submersion Vertical Bar Scale Visualizer */
+.city-submersion-wrapper {
   display: flex;
   align-items: flex-end;
-  gap: 1.5rem;
+  gap: 1.2rem;
   background: #04060c;
   padding: 1.2rem;
   border-radius: 12px;
-  height: 180px;
+  height: 220px;
 }
 
-.sea-wave-box {
-  width: 44px;
+.city-water-bar-container {
+  width: 24px;
   height: 100%;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 12px;
   position: relative;
   overflow: hidden;
   border: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
-.sea-wave-fill {
+.city-water-fill {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -533,11 +530,70 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   transition: height 0.5s ease;
 }
 
+.city-markers-list {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.city-marker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+.city-marker-item.submerged {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.city-name-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.city-name {
+  color: #f8fafc;
+}
+
+.city-thresh {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.badge-submerged {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent-red);
+  background: rgba(239, 68, 68, 0.25);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.badge-safe {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--accent-green);
+  background: rgba(52, 211, 153, 0.15);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
 @media (max-width: 1024px) {
   .calc-container {
     grid-template-columns: 1fr;
   }
-  .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .gauge-flex-box {
+    grid-template-columns: 1fr;
   }
 }
