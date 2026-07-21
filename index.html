@@ -90,10 +90,10 @@
       max-width: 680px;
     }
 
-    /* Grid Gallery */
+    /* Symmetric Grid Gallery */
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
     }
 
@@ -201,6 +201,52 @@
       box-shadow: 0 0 20px var(--accent-glow);
     }
 
+    /* Empty Placeholder Card for Grid Symmetry */
+    .placeholder-card {
+      background: rgba(18, 26, 43, 0.35);
+      border: 2px dashed rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      text-align: center;
+      gap: 1rem;
+      min-height: 420px;
+      transition: all 0.3s ease;
+    }
+
+    .placeholder-card:hover {
+      border-color: rgba(56, 189, 248, 0.3);
+      background: rgba(18, 26, 43, 0.5);
+    }
+
+    .ph-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--text-muted);
+    }
+
+    .ph-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .ph-desc {
+      font-size: 0.88rem;
+      color: rgba(148, 163, 184, 0.7);
+      max-width: 280px;
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -210,9 +256,12 @@
       font-size: 0.85rem;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 900px) {
       .gallery-grid {
         grid-template-columns: 1fr;
+      }
+      .placeholder-card {
+        min-height: 240px;
       }
     }
   </style>
@@ -226,55 +275,25 @@
       <p class="subtitle">點擊下方卡片可直接體驗不同階段開發的圖片比較、Scrollytelling 與 Explorable Explanation 視覺互動效果。</p>
     </header>
 
-    <!-- Version Gallery Grid -->
+    <!-- Symmetric Version Gallery Grid (3 Rows x 2 Columns = 6 Slots) -->
     <main class="gallery-grid">
       
-      <!-- Version 5 EE -->
-      <article class="version-card" style="grid-column: 1 / -1;">
-        <div class="thumbnail-container" style="aspect-ratio: 21 / 9;">
-          <span class="version-tag-overlay" style="background:rgba(56,189,248,0.25); color:#7dd3fc; border-color:#38bdf8">VERSION 5 (Explorable Explanation)</span>
-          <img src="5-ee/thumbnail.png" alt="5-ee 探索式解釋網頁 截圖預覽" loading="eager">
-        </div>
-        <div class="card-body">
-          <h2 class="card-title" style="color:#38bdf8"><i class="ri-pulse-line"></i> 5-ee (Explorable Explanation 探索式解釋)</h2>
-          <p class="card-desc">依據 Bret Victor 理念與 ee.md 導引設計。包含「1. 氣溫與平衡線 ELA 拆解」、「2. 100 年氣候延遲反應」、「3. 冰川高度正回饋雙模型比較」、「4. 降雪與升溫矩陣熱圖」、「5. 自由沙盒實驗室」。包含 2D 冰川動態剖面、平衡線與即時體積變化曲線。</p>
-          <a class="btn-open" href="5-ee/index.html" style="background:var(--accent-primary); color:#0f172a; font-weight:700">
-            <i class="ri-play-circle-line"></i> 開啟 5-ee 探索式解釋互動網頁
-          </a>
-        </div>
-      </article>
-
-      <!-- Version 4 -->
+      <!-- Slot 1: Version 1 -->
       <article class="version-card">
         <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 4</span>
-          <img src="4-局部放大焦點/thumbnail.png" alt="4-局部放大焦點 截圖預覽" loading="eager">
+          <span class="version-tag-overlay">VERSION 1</span>
+          <img src="1-工具模式/thumbnail.png" alt="1-工具模式 截圖預覽" loading="eager">
         </div>
         <div class="card-body">
-          <h2 class="card-title"><i class="ri-search-eye-line"></i> 4-局部放大焦點 (Markdown 解耦)</h2>
-          <p class="card-desc">右側文章排版，騰出左側 60% 以上寬廣露圖空間。滾動時底圖會自動進行局部放大 (Zoom) 並跳出紅圈焦點標籤與說明。文章與焦點配置 100% 寫於獨立 story.md 檔案中。</p>
-          <a class="btn-open" href="4-局部放大焦點/index.html">
-            <i class="ri-external-link-line"></i> 開啟 4-局部放大焦點網頁
+          <h2 class="card-title"><i class="ri-tools-line"></i> 1-工具模式</h2>
+          <p class="card-desc">全功能圖片比對獨立工具箱。包含左右/上下分割滑桿、透明度重疊、並排檢視、按住切換等多種比較模式，並支援自訂圖片上傳與全螢幕操作。</p>
+          <a class="btn-open" href="1-工具模式/index.html">
+            <i class="ri-external-link-line"></i> 開啟 1-工具模式 網頁
           </a>
         </div>
       </article>
 
-      <!-- Version 3 -->
-      <article class="version-card">
-        <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 3</span>
-          <img src="3-底圖式scrollytelling/thumbnail.png" alt="3-底圖式 截圖預覽" loading="eager">
-        </div>
-        <div class="card-body">
-          <h2 class="card-title"><i class="ri-fullscreen-line"></i> 3-底圖式 Scrollytelling</h2>
-          <p class="card-desc">全螢幕滿版底圖沉浸式敘事。圖片固定置底為全螢幕背景，文章卡片單欄置中呈現半透明玻璃質感。採用極簡直角、無邊框、無陰影設計，且段落間距加大至 75vh 以利看圖。</p>
-          <a class="btn-open" href="3-底圖式scrollytelling/index.html">
-            <i class="ri-external-link-line"></i> 開啟 3-底圖式網頁
-          </a>
-        </div>
-      </article>
-
-      <!-- Version 2 -->
+      <!-- Slot 2: Version 2 -->
       <article class="version-card">
         <div class="thumbnail-container">
           <span class="version-tag-overlay">VERSION 2</span>
@@ -289,20 +308,59 @@
         </div>
       </article>
 
-      <!-- Version 1 -->
+      <!-- Slot 3: Version 3 -->
       <article class="version-card">
         <div class="thumbnail-container">
-          <span class="version-tag-overlay">VERSION 1</span>
-          <img src="1-工具模式/thumbnail.png" alt="1-工具模式 截圖預覽" loading="eager">
+          <span class="version-tag-overlay">VERSION 3</span>
+          <img src="3-底圖式scrollytelling/thumbnail.png" alt="3-底圖式 截圖預覽" loading="eager">
         </div>
         <div class="card-body">
-          <h2 class="card-title"><i class="ri-tools-line"></i> 1-工具模式</h2>
-          <p class="card-desc">全功能圖片比對獨立工具箱。包含左右/上下分割滑桿、透明度重疊、並排檢視、按住切換等多種比較模式，並支援自訂圖片上傳與全螢幕操作。</p>
-          <a class="btn-open" href="1-工具模式/index.html">
-            <i class="ri-external-link-line"></i> 開啟 1-工具模式 網頁
+          <h2 class="card-title"><i class="ri-fullscreen-line"></i> 3-底圖式 Scrollytelling</h2>
+          <p class="card-desc">全螢幕滿版底圖沉浸式敘事。圖片固定置底為全螢幕背景，文章卡片單欄置中呈現半透明玻璃質感。採用極簡直角、無邊框、無陰影設計，且段落間距加大至 75vh 以利看圖。</p>
+          <a class="btn-open" href="3-底圖式scrollytelling/index.html">
+            <i class="ri-external-link-line"></i> 開啟 3-底圖式網頁
           </a>
         </div>
       </article>
+
+      <!-- Slot 4: Version 4 -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay">VERSION 4</span>
+          <img src="4-局部放大焦點/thumbnail.png" alt="4-局部放大焦點 截圖預覽" loading="eager">
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><i class="ri-search-eye-line"></i> 4-局部放大焦點</h2>
+          <p class="card-desc">右側文章排版，騰出左側 60% 以上寬廣露圖空間。滾動時底圖會自動進行局部放大 (Zoom) 並跳出紅圈焦點標籤與說明。文章與焦點配置寫於獨立 story.md 檔案中。</p>
+          <a class="btn-open" href="4-局部放大焦點/index.html">
+            <i class="ri-external-link-line"></i> 開啟 4-局部放大焦點網頁
+          </a>
+        </div>
+      </article>
+
+      <!-- Slot 5: Version 5 (Explorable Explanation) -->
+      <article class="version-card">
+        <div class="thumbnail-container">
+          <span class="version-tag-overlay" style="background:rgba(56,189,248,0.25); color:#7dd3fc; border-color:#38bdf8">VERSION 5 (EE)</span>
+          <img src="5-ee/thumbnail.png" alt="5-ee 探索式解釋網頁 截圖預覽" loading="eager">
+        </div>
+        <div class="card-body">
+          <h2 class="card-title" style="color:#38bdf8"><i class="ri-pulse-line"></i> 5-ee (Explorable Explanation)</h2>
+          <p class="card-desc">依據 Bret Victor 理念與 ee.md 導引設計。包含「1. 氣溫與 ELA 拆解」、「2. 100 年氣候延遲」、「3. 冰川高度正回饋」、「4. 降雪與升溫矩陣」、「5. 自由沙盒」，讓使用者親自探索因果。</p>
+          <a class="btn-open" href="5-ee/index.html" style="background:var(--accent-primary); color:#0f172a; font-weight:700">
+            <i class="ri-play-circle-line"></i> 開啟 5-ee 探索式解釋網頁
+          </a>
+        </div>
+      </article>
+
+      <!-- Slot 6: Empty Symmetric Placeholder -->
+      <div class="placeholder-card">
+        <div class="ph-icon">
+          <i class="ri-flask-line"></i>
+        </div>
+        <div class="ph-title">VERSION 6 / COMING SOON</div>
+        <div class="ph-desc">更多氣候變遷與環境數據視覺化互動模組開發中...</div>
+      </div>
 
     </main>
 
