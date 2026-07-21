@@ -7,13 +7,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const autoBalanceToggle = document.getElementById('autoBalanceToggle');
   const slidersList = document.getElementById('slidersList');
 
-  // Metric Elements (3 Clean Key Cards Only!)
-  const metricTemp = document.getElementById('metricTemp');
-  const metricTempDesc = document.getElementById('metricTempDesc');
-  const metricSea = document.getElementById('metricSea');
-  const metricSeaDesc = document.getElementById('metricSeaDesc');
+  // Embedded Live Metric Elements
   const metricCapex = document.getElementById('metricCapex');
-  const metricCapexDesc = document.getElementById('metricCapexDesc');
+  const thermoLiveVal = document.getElementById('thermoLiveVal');
+  const seaLiveVal = document.getElementById('seaLiveVal');
 
   // Gauge & City Submersion Elements
   const thermoFill = document.getElementById('thermoFill');
@@ -38,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     { id: 'amsterdam', name: '🏛️ 阿姆斯特丹', threshold: 60 },
     { id: 'taipei', name: '🏙️ 台北盆地/淡水河口', threshold: 75 },
     { id: 'newyork', name: '🗽 紐約曼哈頓沿岸', threshold: 95 },
-    { id: 'tokyo', name: '🌆 東京灣/江東區', threshold: 115 },
+    { id: 'tokyo', name: '<ctrl42> 東京灣/江東區', threshold: 115 },
     { id: 'shanghai', name: '🌉 上海/長江口', threshold: 135 }
   ];
 
@@ -115,7 +112,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       slidersList.appendChild(row);
 
-      // Interactive Click & Drag Bar Events
       const barTrack = row.querySelector(`#bar_track_${s.id}`);
       const lockBtn = row.querySelector(`#lock_${s.id}`);
 
@@ -147,7 +143,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
-    // Global Mousemove & Mouseup for smooth bar dragging
     window.addEventListener('mousemove', (e) => {
       if (!isDragging || !activeDragId) return;
       const barTrack = document.getElementById(`bar_track_${activeDragId}`);
@@ -305,10 +300,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (Math.abs(totalDemand - 100) < 0.5) {
       demandStatusText.className = 'demand-status-text';
-      demandStatusText.innerHTML = `<i class="ri-checkbox-circle-fill"></i> 供需平衡：100% 需求完全滿足`;
+      demandStatusText.innerHTML = `<i class="ri-checkbox-circle-fill"></i> 供需平衡：100% 需求滿足`;
     } else {
       demandStatusText.className = 'demand-status-text warning';
-      demandStatusText.innerHTML = `<i class="ri-error-warning-fill"></i> 供需不平衡 (${totalDemand.toFixed(1)}%)，請調整或開啟自動平衡`;
+      demandStatusText.innerHTML = `<i class="ri-error-warning-fill"></i> 不平衡 (${totalDemand.toFixed(1)}%)`;
     }
 
     const bauIntensity = 575;
@@ -319,29 +314,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const annualGdpInvestment = Math.max(1.0, totalGdpShareSum);
 
-    // Update 3 Clean Top Key Metric Cards
-    metricTemp.textContent = `+${deltaTemp.toFixed(1)}°C`;
-    metricSea.textContent = `${deltaSea.toFixed(1)} cm`;
-    metricCapex.textContent = `${annualGdpInvestment.toFixed(1)} %`;
-    metricCapexDesc.textContent = `每年全球 GDP 投入綠能建置與電網`;
-
-    if (deltaTemp <= 1.5) {
-      metricTempDesc.textContent = "🟢 2100 達成巴黎協定 1.5°C 安全控制線";
-    } else if (deltaTemp <= 2.0) {
-      metricTempDesc.textContent = "🟠 2100 巴黎協定 2.0°C 上限控制線";
-    } else {
-      metricTempDesc.textContent = "🔴 2100 高風險氣候失控衝擊軌跡";
-    }
-
-    if (deltaSea <= 40) {
-      metricSeaDesc.textContent = "🟢 2100 沿海防禦可控制範圍";
-    } else {
-      metricSeaDesc.textContent = "🔴 2100 沿海大都會與低窪島國淹沒風險";
-    }
+    // Embedded Live Metrics
+    if (thermoLiveVal) thermoLiveVal.textContent = `+${deltaTemp.toFixed(1)}°C`;
+    if (seaLiveVal) seaLiveVal.textContent = `${deltaSea.toFixed(1)} cm`;
+    if (metricCapex) metricCapex.textContent = `${annualGdpInvestment.toFixed(1)}% GDP`;
 
     // Update Thermometer Fill (2100 Scale)
     const thermoPct = Math.min(100, Math.max(15, ((deltaTemp - 1.0) / 3.5) * 80 + 15));
-    thermoFill.style.height = `${thermoPct}%`;
+    if (thermoFill) thermoFill.style.height = `${thermoPct}%`;
 
     // Update City Submersion Vertical Scale Bar
     updateCitySubmersionScale(deltaSea);
@@ -444,7 +424,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     trajCtx.fillStyle = 'rgba(239, 68, 68, 0.8)';
     trajCtx.font = '11px "Outfit", sans-serif';
-    trajCtx.fillText('-- 無介入現狀 (BAU)', width - 140, 25);
+    trajCtx.fillText('-- 無介入現況 (BAU)', width - 140, 25);
 
     trajCtx.fillStyle = strokeColor;
     trajCtx.font = 'bold 11px "Outfit", sans-serif';

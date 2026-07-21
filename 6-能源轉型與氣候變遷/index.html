@@ -53,8 +53,14 @@
           <!-- Stacked color segments rendered by app.js -->
         </div>
 
-        <div class="demand-status-text" id="demandStatusText">
-          <i class="ri-checkbox-circle-fill"></i> 供需平衡：100% 需求完全滿足
+        <!-- Bottom Row: Left Status + Right Annual Transition Investment (% GDP) -->
+        <div class="demand-bottom-row">
+          <div class="demand-status-text" id="demandStatusText">
+            <i class="ri-checkbox-circle-fill"></i> 供需平衡：100% 需求滿足
+          </div>
+          <div class="gdp-investment-badge" id="gdpInvestmentBadge" title="每年全球 GDP 投入綠能建置與電網比率">
+            年均轉型投資: <span id="metricCapex">1.2% GDP</span>
+          </div>
         </div>
       </div>
 
@@ -76,57 +82,42 @@
     <!-- Right Interactive Dashboards & Real-time Canvas Charts -->
     <section class="viz-dashboard">
 
-      <!-- Top Key Climate & Economic Metrics Cards (3 Clean Key Cards Only!) -->
-      <div class="metrics-grid">
-        <div class="metric-card alert-temp">
-          <div class="m-title"><i class="ri-temp-hot-line"></i> 2100 地球平均升溫 (&Delta;T)</div>
-          <div class="m-val" id="metricTemp">+3.6°C</div>
-          <div class="m-desc" id="metricTempDesc">相較於工業化前水平</div>
-        </div>
-
-        <div class="metric-card alert-sea">
-          <div class="m-title"><i class="ri-water-flash-line"></i> 2100 海平面預計上升</div>
-          <div class="m-val" id="metricSea">115.0 cm</div>
-          <div class="m-desc" id="metricSeaDesc">全球平均沿海侵蝕上升</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="m-title"><i class="ri-funds-line"></i> 年均轉型投資 (% Global GDP)</div>
-          <div class="m-val" id="metricCapex">1.2 %</div>
-          <div class="m-desc" id="metricCapexDesc">每年全球 GDP 投入綠能與儲能比率</div>
-        </div>
-      </div>
-
       <!-- 2025 - 2100 CO2 Trajectory Chart -->
       <div class="viz-box">
         <div class="box-header">
           <h3><i class="ri-line-chart-line"></i> 2025–2100 全球碳排放軌跡 (Gt CO₂ / 年)</h3>
         </div>
-        <canvas id="trajectoryCanvas" width="760" height="180"></canvas>
+        <canvas id="trajectoryCanvas" width="760" height="200"></canvas>
       </div>
 
       <!-- Thermometer & City Submersion Vertical Bar Scale Visualizer -->
       <div class="viz-box gauge-flex-box">
 
-        <!-- 2100 Thermometer -->
+        <!-- 2100 Thermometer (Live Temp embedded in header!) -->
         <div class="gauge-card">
-          <div class="gauge-title"><i class="ri-thermometer-line"></i> 2100 地球升溫溫度計</div>
+          <div class="gauge-title">
+            <span><i class="ri-thermometer-line"></i> 2100 地球平均升溫</span>
+            <span class="gauge-live-val alert-temp-text" id="thermoLiveVal">+3.6°C</span>
+          </div>
           <div class="thermometer-visual">
             <div class="thermo-tube">
               <div class="thermo-fill" id="thermoFill" style="height: 70%;"></div>
             </div>
             <div class="thermo-marks">
               <span>+4.5°C (失控)</span>
-              <span>+3.6°C (BAU 現狀)</span>
+              <span>+3.6°C (BAU 現況)</span>
               <span>+2.0°C (巴黎上限)</span>
               <span>+1.5°C (淨零安全線)</span>
             </div>
           </div>
         </div>
 
-        <!-- 2100 Sea Level City Submersion Scale Bar -->
+        <!-- 2100 Sea Level City Submersion Scale Bar (Live Sea Level embedded in header!) -->
         <div class="gauge-card city-submersion-card">
-          <div class="gauge-title"><i class="ri-anchor-line"></i> 2100 沿海城市海水淹沒指標尺標</div>
+          <div class="gauge-title">
+            <span><i class="ri-anchor-line"></i> 2100 海平面預計上升</span>
+            <span class="gauge-live-val alert-sea-text" id="seaLiveVal">115.0 cm</span>
+          </div>
           
           <div class="city-submersion-wrapper">
             <!-- Vertical Rising Water Fill Tube Bar -->

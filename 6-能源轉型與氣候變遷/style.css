@@ -186,6 +186,14 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   transition: width 0.2s ease;
 }
 
+.demand-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.74rem;
+}
+
 .demand-status-text {
   font-size: 0.74rem;
   color: var(--accent-green);
@@ -196,6 +204,23 @@ input:checked + .slider-round:before { transform: translateX(14px); }
 
 .demand-status-text.warning {
   color: var(--accent-red);
+}
+
+.gdp-investment-badge {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.gdp-investment-badge span {
+  font-family: var(--font-mono);
+  color: var(--accent-blue);
+  font-weight: 700;
 }
 
 /* Shortened Presets Row between Demand Meter & Energy Bars */
@@ -370,56 +395,6 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   gap: 1.25rem;
 }
 
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
-}
-
-.metric-card {
-  background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-color);
-  padding: 1.15rem 1.3rem;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.metric-card.alert-temp {
-  border-color: rgba(239, 68, 68, 0.4);
-  background: rgba(239, 68, 68, 0.08);
-}
-
-.metric-card.alert-sea {
-  border-color: rgba(56, 189, 248, 0.4);
-  background: rgba(56, 189, 248, 0.08);
-}
-
-.m-title {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.m-val {
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-
-.alert-temp .m-val { color: var(--accent-red); }
-.alert-sea .m-val { color: var(--accent-blue); }
-
-.m-desc {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
 /* Viz Box Cards */
 .viz-box {
   background: var(--bg-card);
@@ -466,7 +441,28 @@ input:checked + .slider-round:before { transform: translateX(14px); }
   color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.gauge-live-val {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 0.1rem 0.5rem;
+  border-radius: 6px;
+}
+
+.alert-temp-text {
+  color: var(--accent-red);
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.alert-sea-text {
+  color: var(--accent-blue);
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
 }
 
 /* Thermometer Visual */
