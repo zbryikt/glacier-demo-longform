@@ -153,9 +153,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         narrativeStream.appendChild(card);
       });
 
+      // Render Waypoints Navigation Box at the bottom of the stream
+      renderWaypointsNav(data.chapters);
+
       // Bind Intersection Observer to dynamically generated cards
       bindObserver();
     }
+  }
+
+  // --- Render Waypoints Navigation Box at Bottom ---
+  function renderWaypointsNav(chapters) {
+    const navBox = document.createElement('div');
+    navBox.className = 'waypoints-footer-nav';
+    navBox.id = 'waypointsFooterNav';
+
+    navBox.innerHTML = `
+      <div class="waypoints-nav-header">
+        <i class="ri-compass-3-line"></i> 快速探索焦點章節 (Waypoints Quick Jump)
+      </div>
+      <div class="waypoints-buttons-grid">
+        ${chapters.map(chap => `
+          <button class="waypoint-btn ${chap.id === 1 ? 'active' : ''}" data-step="${chap.id}" title="${escapeHtml(chap.title)}">
+            <span class="wp-num">${escapeHtml(chap.badge.replace(/Chapter\s*/i, ''))}</span>
+            <span class="wp-title">${escapeHtml(chap.title)}</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+
+    narrativeStream.appendChild(navBox);
+
+    // Bind Click Events on Waypoint Buttons
+    navBox.querySelectorAll('.waypoint-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const step = parseInt(btn.dataset.step, 10);
+        const targetCard = document.querySelector(`.narrative-card[data-step="${step}"]`);
+        
+        if (targetCard) {
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          triggerFocalPoint(step);
+          
+          // Highlight active button
+          navBox.querySelectorAll('.waypoint-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        }
+      });
+    });
   }
 
   function escapeHtml(str) {
@@ -183,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize bar at center 50%
   applyClipPathAndBar();
 
-  // --- Smooth Bar Animation Helper (Used for Waypoint Auto Sweep & Click Slide) ---
+  // --- Smooth Bar Animation Helper ---
   function animateBarTo(targetPercent, duration = 1000) {
     if (animId) cancelAnimationFrame(animId);
 
@@ -343,6 +386,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Bind IntersectionObserver to rendered cards
   function bindObserver() {
     const cards = document.querySelectorAll('.narrative-card');
+    const wpBtns = document.querySelectorAll('.waypoint-btn');
+
     const observerOptions = {
       root: null,
       rootMargin: '-35% 0px -40% 0px',
@@ -357,6 +402,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
           const step = parseInt(entry.target.dataset.step, 10);
           triggerFocalPoint(step);
+
+          // Update active state of Waypoint buttons
+          wpBtns.forEach(btn => {
+            const btnStep = parseInt(btn.dataset.step, 10);
+            btn.classList.toggle('active', btnStep === step);
+          });
         }
       });
     }, observerOptions);

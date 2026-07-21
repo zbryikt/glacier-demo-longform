@@ -171,7 +171,7 @@ body {
   top: 50%;
   height: 44px;
   transform: translateY(-50%);
-  z-index: 60; /* Higher than story overlay so user can easily click/drag */
+  z-index: 60;
   display: flex;
   align-items: center;
   cursor: ns-resize;
@@ -190,7 +190,7 @@ body {
 /* Left-Anchored Drag Button (positioned in the left 60% exposed area) */
 .handle-button {
   position: absolute;
-  left: 4vw; /* Left anchor to avoid right-aligned text cards */
+  left: 4vw;
   width: 52px;
   height: 52px;
   border-radius: 0;
@@ -282,7 +282,7 @@ body {
   position: relative;
   z-index: 10;
   width: 100%;
-  pointer-events: none; /* Allow drag events on the handle bar beneath */
+  pointer-events: none;
 }
 
 /* Hero Section Aligned to Right */
@@ -311,7 +311,7 @@ body {
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
-  pointer-events: auto; /* Enable interaction for text cards */
+  pointer-events: auto;
 }
 
 .hero-tag {
@@ -366,7 +366,7 @@ body {
   width: 38vw;
   min-width: 340px;
   max-width: 500px;
-  padding: 0 0 30vh 0;
+  padding: 0 0 10vh 0;
   display: flex;
   flex-direction: column;
 }
@@ -386,11 +386,11 @@ body {
   opacity: 0.55;
   transform: translateY(30px);
   transition: opacity 0.5s ease, transform 0.5s ease, background 0.5s ease;
-  pointer-events: auto; /* Enable interaction for text cards */
+  pointer-events: auto;
 }
 
 .narrative-card:last-child {
-  margin-bottom: 30vh;
+  margin-bottom: 10vh;
 }
 
 .narrative-card.active {
@@ -455,6 +455,93 @@ body {
   margin: 0.85rem 0;
   color: #e2e8f0;
   font-size: 0.98rem;
+}
+
+/* Quick Waypoints Navigation Section at Bottom */
+.waypoints-footer-nav {
+  background: rgba(8, 12, 24, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 15vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  pointer-events: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.waypoints-nav-header {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.03em;
+}
+
+.waypoints-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+
+.waypoint-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-muted);
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.waypoint-btn .wp-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  background: rgba(56, 189, 248, 0.15);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.waypoint-btn .wp-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+.waypoint-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--accent-primary);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.waypoint-btn.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.waypoint-btn.active .wp-num {
+  background: rgba(15, 23, 42, 0.3);
+  color: #0f172a;
 }
 
 .app-footer {
