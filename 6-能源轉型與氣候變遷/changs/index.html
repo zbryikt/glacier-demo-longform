@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6-能源轉型與氣候變遷 - 演進歷程 Commit 藝廊</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Remixicon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --bg-card: rgba(18, 26, 43, 0.75);
+      --bg-card-hover: rgba(26, 38, 62, 0.9);
+      --accent-primary: #f97316;
+      --accent-blue: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.12);
+      --radius-lg: 16px;
+      --font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(249, 115, 22, 0.1) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(56, 189, 248, 0.08) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      justify-content: center;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.35rem 0.9rem;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      color: var(--accent-primary);
+      border-radius: 30px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
+
+    /* Grid Gallery */
+    .commit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.75rem;
+    }
+
+    /* Commit Card */
+    .commit-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .commit-card:hover {
+      border-color: rgba(249, 115, 22, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 25px rgba(249, 115, 22, 0.15);
+    }
+
+    .commit-header {
+      padding: 1rem 1.25rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .commit-step-tag {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      background: rgba(249, 115, 22, 0.15);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .commit-hash {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+
+    .commit-img-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #04060c;
+      overflow: hidden;
+    }
+
+    .commit-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .commit-card:hover .commit-img-container img {
+      transform: scale(1.02);
+    }
+
+    .commit-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .commit-msg {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.5;
+    }
+
+    .commit-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .commit-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <span class="header-badge"><i class="ri-history-line"></i> Git Evolution Gallery</span>
+      <h1>6-能源轉型與氣候變遷 - 演進歷程 Commit 藝廊</h1>
+      <a href="../index.html" class="back-link"><i class="ri-arrow-left-line"></i> 返回第 6 版計算器網頁</a>
+    </header>
+
+    <!-- Commit Grid (10 Steps Chronological Evolution) -->
+    <main class="commit-grid">
+
+      <!-- Step 10: Current Master -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 10 (最新版)</span>
+          <span class="commit-hash">d5a9b26</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_d5a9b26.png" alt="Commit d5a9b26 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">style(v6): remove top header for clean full-screen interactive calculator layout</div>
+          <div class="commit-desc">移除頁面頂部固定 Header 標題列，改為完全沉浸式的全螢幕極簡互動計算器介面。</div>
+        </div>
+      </article>
+
+      <!-- Step 9 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 9</span>
+          <span class="commit-hash">f02fe41</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_f02fe41.png" alt="Commit f02fe41 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">feat(v6): display red '無法辦到' warning badge when energy bar exceeds physical capacity cap</div>
+          <div class="commit-desc">當調動能源超出物理上限（如水力 >15%）時，即時跳出紅字閃爍「無法辦到」警示標籤與 Tooltip 提醒。</div>
+        </div>
+      </article>
+
+      <!-- Step 8 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 8</span>
+          <span class="commit-hash">7a3e3f1</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_7a3e3f1.png" alt="Commit 7a3e3f1 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">style(v6): remove top big metric cards, embed live temp and sea level numbers into gauge headers, and move annual GDP investment to demand meter bottom right</div>
+          <div class="commit-desc">移除頂部 3 張大數字卡片。升溫與海平面數值直接內嵌至下方圖表標題列；年均轉型投資移至左側需求外框右下角。</div>
+        </div>
+      </article>
+
+      <!-- Step 7 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 7</span>
+          <span class="commit-hash">5cdc5fa</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_5cdc5fa.png" alt="Commit 5cdc5fa 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">style(v6): remove borders/margins from energy rows for ultra-compact layout and move shortened presets bar between demand meter and energy list</div>
+          <div class="commit-desc">移除能源色塊列外框與邊距達到極致緊湊。將簡化情境按鈕（現況、巴黎協定、All in核能、All in再生）嵌入需求框與能源列之間。</div>
+        </div>
+      </article>
+
+      <!-- Step 6 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 6</span>
+          <span class="commit-hash">99052ce</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_99052ce.png" alt="Commit 99052ce 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">feat(v6): simplify top metrics to 3 key cards and add 2100 Sea Level City Submersion vertical bar scale including Taipei and Maldives</div>
+          <div class="commit-desc">新增 2100 海平面淹沒指標性城市垂直尺標（含台北盆地與馬爾地夫），由下至上實時判定並標示淹沒風險。</div>
+        </div>
+      </article>
+
+      <!-- Step 5 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 5</span>
+          <span class="commit-hash">a2f7199</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_a2f7199.png" alt="Commit a2f7199 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">style(v6): integrate stacked energy mix bar inside demand meter and restrict tooltips to info-circle icon</div>
+          <div class="commit-desc">將能源多色配比結構條直接融合至全球能源供需進度條中；說明 Tooltip 限定在 ⓘ 圖示懸停時才觸發。</div>
+        </div>
+      </article>
+
+      <!-- Step 4 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 4</span>
+          <span class="commit-hash">b6789ad</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_b6789ad.png" alt="Commit b6789ad 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">style(v6): refactor energy list into compact interactive color bars with tooltips and merge auto-balance switch into demand header</div>
+          <div class="commit-desc">重構能源控制面板為橫向色塊條 (name [bar] percent lock)，並將自動平衡開關併入供需標題右側。</div>
+        </div>
+      </article>
+
+      <!-- Step 3 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 3</span>
+          <span class="commit-hash">96b897b</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_96b897b.png" alt="Commit 96b897b 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">feat(v6): update simulation target horizon to 2100 and transition investment to % Global GDP</div>
+          <div class="commit-desc">將氣候模擬時間跨度由 2050 年提升至 2100 世紀跨度；轉型投資改以 % Global GDP / 年國際標準估算。</div>
+        </div>
+      </article>
+
+      <!-- Step 2 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 2</span>
+          <span class="commit-hash">92fb2c1</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_92fb2c1.png" alt="Commit 92fb2c1 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">feat(v6): add maximum capacity caps, transition investment cost, LCOE index, and climate damage saved</div>
+          <div class="commit-desc">導入七大能源物理/地理上限 (Max Cap)、發電成本 (LCOE) 與氣候災害經濟損失節省模型。</div>
+        </div>
+      </article>
+
+      <!-- Step 1 -->
+      <article class="commit-card">
+        <div class="commit-header">
+          <span class="commit-step-tag">STEP 1 (初始版本)</span>
+          <span class="commit-hash">a5acf1f</span>
+        </div>
+        <div class="commit-img-container">
+          <img src="commit_a5acf1f.png" alt="Commit a5acf1f 截圖" loading="eager">
+        </div>
+        <div class="card-body commit-body">
+          <div class="commit-msg">feat(v6): add Energy Transition & 2050 Climate Calculator 6-能源轉型與氣候變遷</div>
+          <div class="commit-desc">初始第 6 版建置：7 大能源控制滑桿、100% 硬性供需平衡機制、2050 溫升與海平面計算器。</div>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 6-能源轉型與氣候變遷 Commit 演進歷程藝廊</p>
+    </footer>
+
+  </div>
+</body>
+</html>
